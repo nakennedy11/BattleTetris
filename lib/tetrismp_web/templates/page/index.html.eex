@@ -1,0 +1,13 @@
+<div class="row">
+  <div class="column">
+
+    <%= form_for @conn, "/game", fn f-> %>
+      <p> Enter game name: <%= text_input f, :name %></p>
+      <p> <%= submit "Enter game" %> </p>
+    <% end %>
+
+
+
+  </div>
+</div>
+

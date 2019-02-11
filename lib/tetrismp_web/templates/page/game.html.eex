@@ -1,0 +1,9 @@
+<script>
+window.gameName= "<%= @name %>";
+</script>
+<h1> Multiplayer Tetris: <%= @name %> </h1>
+<div id="root">
+  React app loading...
+</div>
+
+
