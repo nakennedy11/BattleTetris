@@ -1,7 +1,7 @@
 <script>
 window.gameName= "<%= @name %>";
 </script>
-<h1> Multiplayer Tetris: <%= @name %> </h1>
+<h3> Multiplayer Tetris: <%= @name %> </h3>
 <div id="root">
   React app loading...
 </div>

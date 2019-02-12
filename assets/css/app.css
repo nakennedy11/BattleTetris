@@ -1,11 +1,17 @@
 /* This file is for your main application css. */
 
 @import "~milligram/dist/milligram";
-.square{
-	height: 25px;
-	width:25px;
+.e-square{
+	height: 23px;
+	width:23px;
 	background-color: #555;
-	border: 1px solid black;
+	border: 1px solid gray;
 }
 
+.f-square{
+	height: 25px;
+	width:25px;
+	background-color: orange;
+	border: 1px solid black;
+}
 

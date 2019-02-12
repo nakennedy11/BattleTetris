@@ -11,7 +11,11 @@ class TetrisBoard extends React.Component {
   constructor(props) {
     super(props);
     this.channel = props.channel;
-    this.state = {
+    this.state = { // these values don't matter; they'll be overwritten by game.ex
+      board: [],
+      current_piece: [],
+      next_piece: [],
+      lines_destroyed: 0,
     }
 
     this.channel
@@ -21,6 +25,7 @@ class TetrisBoard extends React.Component {
       .receive("error", resp => {console.log("Unable to join", resp);});
   }
 
+  // create the board
   create_board() {
     let board = [];
     let i;
@@ -31,7 +36,8 @@ class TetrisBoard extends React.Component {
       board[i] = [];
       let temp_row = [];
       for (j = 0; j < 10; j++ ) {
-        temp_row.push(<div  key={key_count}> <Tile value={0}/> </div>);
+	let val = 10 * i + j; // this is the corresponding index in game.ex's board
+        temp_row.push(<div key={key_count}> <Tile value={this.state.board[val]}/> </div>);
 	key_count = key_count + 1;
       }
       board[i].push(<div className="row" key={key_count2}> {temp_row} </div>);
@@ -41,16 +47,34 @@ class TetrisBoard extends React.Component {
     return board;
   }
 
+  // render the current piece
+  render_piece() {
+    this.channel.push("render_piece", {})
+	  .receive("ok", resp => {console.log("rendered piece", resp.game);
+		  this.setState(resp.game);});
+  }
 
   render() {
     let board = this.create_board();
-    return board;
+    //this.render_piece();
+    //TODO: figure out how to render this seperately from the gameboard
+    return (
+	    <div className="row">
+		  <div className="column"> {board} </div>
+		  <div className="column">  Lines: {this.state.lines_destroyed} </div>
+		  <div className="column"> Next Piece: {this.state.next_piece} </div>
+	  </div> );
   }
 }
 
 
 function Tile(props) {
-  
-  return <div className="square"></div>
-
+  let value = props.value;
+  if (value == 0 || value == null) {
+    return <div className="e-square"></div>
+  }
+  else {
+    return <div className="f-square"></div>
+  }
 }
+
