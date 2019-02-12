@@ -15,3 +15,4 @@ Added rendering functions in game.ex, the logic is a little weird, but hopefully
 Added index calculations functions in game.ex
 
 Added a function that would update the list at the given index with a 1 and then update the game.
+Added some ontick stuff, looks like its working, need to add the rendering piece function to the ontick.

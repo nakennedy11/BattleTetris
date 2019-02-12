@@ -16,13 +16,28 @@ class TetrisBoard extends React.Component {
       current_piece: [],
       next_piece: [],
       lines_destroyed: 0,
-    }
+      seconds: 0
+    };
 
     this.channel
       .join()
       .receive("ok", resp => { console.log("Joined successfully", resp.game);
                             this.setState(resp.game);})
       .receive("error", resp => {console.log("Unable to join", resp);});
+  }
+
+  // on tick function
+  tick() {
+    this.setState(prevState => ({ seconds : prevState.seconds + 1}));
+  }
+
+  // mounting component
+  componentDidMount() {
+    this.interval = setInterval(() => this.tick(), 1000);	
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
   }
 
   // create the board
@@ -63,6 +78,7 @@ class TetrisBoard extends React.Component {
 		  <div className="column"> {board} </div>
 		  <div className="column">  Lines: {this.state.lines_destroyed} </div>
 		  <div className="column"> Next Piece: {this.state.next_piece} </div>
+	          <div className="column"> Seconds: {this.state.seconds} </div>
 	  </div> );
   }
 }
