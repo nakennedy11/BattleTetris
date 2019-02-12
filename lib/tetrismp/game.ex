@@ -9,8 +9,8 @@ defmodule Tetrismp.Game do
   def new do
     %{
       board: List.duplicate(0, 200), # make a list of 200 0's to represent all the unfilled squares
-      current_piece: Map.values(random_piece),
-      next_piece: Map.values(random_piece),
+      current_piece: Map.values(random_piece()),
+      next_piece: Map.values(random_piece()),
       lines_destroyed: 0
       }
   end
@@ -31,16 +31,26 @@ defmodule Tetrismp.Game do
     # Piece 6 backwards L (aka a W)
     # Piece 7 L (upright facing)
 
-
     %{
       i: 0, #this has to be 0 because of the way the gameboard is arranged >;(
       j: 5,
-
       orientation: 1, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
       piece: :rand.uniform(7), #this will be the type of piece
-
     }
            
+  end
+
+  #calculate the index given i & j
+  def idx(i, j) do
+    i * 20 + j
+  end
+
+  # replace elements in board and update the game state
+  def replace_board(i, j, game) do
+    index = idx(i,j)
+    new_list = List.replace_at(game.board, index, 1) # replacing in game board
+    Map.put(game, :board, new_list) # updating in game state
+  
   end
 
   # returns the updated game state with the piece on the board
@@ -49,26 +59,149 @@ defmodule Tetrismp.Game do
     {_, piece_type} = Enum.fetch(piece, 3)
     {_, i} = Enum.fetch(piece, 0)
     {_, j} = Enum.fetch(piece, 0)
-    anchor = i * 20 + j # this is the corresponding index of the anchor point of the piece
+    anchor = idx(i,j) # this is the corresponding index of the anchor point of the piece
     board = List.replace_at(game.board, anchor, 1) # updating the value of game board w/anchor point
 
     # now we need to change the rest of game board based on the type of piece 
     cond do
       piece_type == 1 ->
-        game
+        long_piece(game, i, j, 1)
       piece_type == 2 ->
-        game
+        t_piece(game, i, j, 1)
       piece_type == 3 ->
-        game
+        square_piece(game, i, j, 1)
       piece_type == 4 ->
-        game
+        rev_z_piece(game, i, j ,1)
       piece_type == 5 ->
-        game
+        z_piece(game, i, j, 1)
       piece_type == 6 ->
-        game
+        rev_l_piece(game, i, j, 1)
       piece_type == 7 ->
-        game
+        l_piece(game, i, j ,1)
     end      
   end
+  
+
+  #TODO: Maybe move this to anothe file?
+
+  # change values in board list for the long piece
+  def long_piece(game, i, j, count) do
+    if (count < 4) do #recursively call this function if the count is less than 4, we are changing values of game board 
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        long_piece(new_game, i, j, count + 1)
+     else
+       game #long boy is done, return game state
+    end
+  end
+
+  # change values in board list for the t piece
+  def t_piece(game, i, j, count) do
+    cond do
+      count == 1 ->
+        j = j + 1
+        new_game = replace_board(i, j, game)
+        t_piece(new_game, i, j, count + 1)
+      count == 2 ->
+        j = j - 2 #need to navigate back to the anchor point so index math doesn't get messed up 
+        new_game = replace_board(i, j, game)
+        t_piece(new_game, i, j, count + 1)
+       count == 3 ->
+        i = i + 1
+        j = j + 1
+        replace_board(i, j, game) # we can return here because there's nothing left to add
+    end
+  end
+
+  # change the values in board list for the square piece
+  def square_piece(game, i, j, count) do
+    cond do
+      count == 1 ->
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        square_piece(new_game, i, j, count + 1)
+      count == 2 ->
+        i = i - 1
+        j = j + 1
+        new_game = replace_board(i, j, game)
+        square_piece(new_game, i, j, count + 1)
+      count == 3 ->
+        i = i + 1
+        replace_board(i, j, game)
+    end
+  end
+
+  # change the values in board list for the reverse z piece
+  def rev_z_piece(game, i, j, count)do
+    cond do 
+      count == 1 ->
+        j = j + 1
+        new_game = replace_board(i, j, game)
+        rev_z_piece(new_game, i, j, count + 1)
+      count == 2 ->
+        j = j - 1
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        rev_z_piece(new_game, i, j, count + 1)
+      count == 3 ->
+        j = j - 1
+        replace_board(i, j, game)
+    end
+  end
+
+  # change the values in board list for the z piece
+  def z_piece(game, i, j, count) do
+    cond do
+      count == 1 ->
+        j = j - 1
+        new_game = replace_board(i, j, game)
+        z_piece(new_game, i, j, count + 1)
+      count == 2 ->
+        j = j + 1
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        z_piece(new_game, i, j, count + 1)
+      count == 3 ->
+        j = j + 1
+        replace_board(i, j, game)
+    end   
+  end
+
+  # change the values in board list for the reverse l piece
+  def rev_l_piece(game, i, j, count) do
+    cond do
+      count == 1 ->
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        rev_l_piece(new_game, i, j, count + 1)
+      count == 2 ->
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        rev_l_piece(new_game, i, j, count + 1)
+      count == 3 ->
+        j = j + 1
+        replace_board(i, j, game)
+    end
+  end
+
+  # change the values in board list for the l piece
+  def l_piece(game, i, j, count) do
+    cond do
+      count == 1 ->
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        rev_l_piece(new_game, i, j, count + 1)
+      count == 2 ->
+        i = i + 1
+        new_game = replace_board(i, j, game)
+        rev_l_piece(new_game, i, j, count + 1)
+      count == 3 ->
+        j = j - 1
+        replace_board(i, j, game)
+    end
+  end
+
+
+
 
 end
