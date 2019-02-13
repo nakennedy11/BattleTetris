@@ -27,6 +27,15 @@ defmodule TetrismpWeb.GamesChannel do
   
   end
 
+  def handle_in("render_next_piece", %{}, socket) do
+    game = Game.render_next_piece(socket.assigns[:game]) # want to render the piece by changing the values of the board
+    socket = assign(socket, :game, game)
+    name = socket.assigns[:name]
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => game}}, socket}
+    
+  end
+
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true

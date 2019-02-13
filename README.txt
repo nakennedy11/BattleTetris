@@ -16,3 +16,13 @@ Added index calculations functions in game.ex
 
 Added a function that would update the list at the given index with a 1 and then update the game.
 Added some ontick stuff, looks like its working, need to add the rendering piece function to the ontick.
+
+Changes (2/12, night - by Noah)
+
+Added smaller side-board to have a place where we can render the next piece
+      - Needs to be in a column div and not a row otherwise it just renders in a line
+      - originally called render_next_piece() in on tick but it didn't really need that cause it renders every
+        second and the next piece will just re-render when it gets changed assumedly
+      - The render in game.ex is fairly manual but it doesn't really need any crazy logic
+        - I feel like it would be much more work than it's worth to fully abstract all the other render functions
+          for such a simple thing

@@ -11,6 +11,7 @@ defmodule Tetrismp.Game do
       board: List.duplicate(0, 200), # make a list of 200 0's to represent all the unfilled squares
       current_piece: Map.values(random_piece()),
       next_piece: Map.values(random_piece()),
+      side_board: List.duplicate(0, 16), # 4x4 grid should be enough to render any piece, slightly overkill but annoying to do math for 3x4 or something or 2x4
       lines_destroyed: 0
       }
   end
@@ -80,9 +81,77 @@ defmodule Tetrismp.Game do
         l_piece(game, i, j ,1)
     end      
   end
+
+  # essentially a duplicate of the above render function, will probably abstract it
+  # but it doesn't need nearly the level of complication so might just leave it a simple boy
+  def render_next_piece(game) do
+    piece = game.next_piece
+    {_, piece_type} = Enum.fetch(piece, 3)
+
+    # I drew out grids for each piece and just put in all the squares where they should be
+    cond do
+      piece_type == 1 ->
+        new_list = game.side_board
+        |> List.replace_at(1,  1)
+        |> List.replace_at(5,  1)
+        |> List.replace_at(9,  1)
+        |> List.replace_at(13, 1)
+
+        Map.put(game, :side_board, new_list)
+      piece_type == 2 ->
+        new_list = game.side_board
+        |> List.replace_at(9,  1)
+        |> List.replace_at(12, 1)
+        |> List.replace_at(13, 1)
+        |> List.replace_at(14, 1)
+
+        Map.put(game, :side_board, new_list)
+      piece_type == 3 ->
+        new_list = game.side_board
+        |> List.replace_at(8,  1)
+        |> List.replace_at(9,  1)
+        |> List.replace_at(12, 1)
+        |> List.replace_at(13, 1)
+
+        Map.put(game, :side_board, new_list)
+      piece_type == 4 ->
+        new_list = game.side_board
+        |> List.replace_at(9,  1)
+        |> List.replace_at(10, 1)
+        |> List.replace_at(12, 1)
+        |> List.replace_at(13, 1)
+
+        Map.put(game, :side_board, new_list)
+      piece_type == 5 ->
+        new_list = game.side_board
+        |> List.replace_at(8,  1)
+        |> List.replace_at(9,  1)
+        |> List.replace_at(13, 1)
+        |> List.replace_at(14, 1)
+
+        Map.put(game, :side_board, new_list)
+      piece_type == 6 ->
+        new_list = game.side_board
+        |> List.replace_at(5,  1)
+        |> List.replace_at(9,  1)
+        |> List.replace_at(12, 1)
+        |> List.replace_at(13, 1)
+
+        Map.put(game, :side_board, new_list)
+      piece_type == 7 ->
+        new_list = game.side_board
+        |> List.replace_at(4,  1)
+        |> List.replace_at(8,  1)
+        |> List.replace_at(12, 1)
+        |> List.replace_at(13, 1)
+
+        Map.put(game, :side_board, new_list)
+    end
+
+  end
   
 
-  #TODO: Maybe move this to anothe file?
+  #TODO: Maybe move this to another file?
 
   # change values in board list for the long piece
   def long_piece(game, i, j, count) do
