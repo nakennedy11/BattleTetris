@@ -25,4 +25,10 @@ Added smaller side-board to have a place where we can render the next piece
         second and the next piece will just re-render when it gets changed assumedly
       - The render in game.ex is fairly manual but it doesn't really need any crazy logic
         - I feel like it would be much more work than it's worth to fully abstract all the other render functions
-          for such a simple thing
+          for such a simple thing 
+
+Changes (2/13 - Bach)
+- Got rendering to work for everything except for the L pieces for some reason. Maybe the socket was rendering 
+  an old game state? I'll take a look at it later today.
+- Moved piece rendering to ontick, but I'm really not sure where to put it.
+- TODO: falling, collision, line destruction (in order of difficulty)

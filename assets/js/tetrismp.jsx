@@ -30,6 +30,8 @@ class TetrisBoard extends React.Component {
   // on tick function
   tick() {
     this.setState(prevState => ({ seconds : prevState.seconds + 1}));
+	  this.render_next_piece();
+	  this.render_piece();
   }
 
   // mounting component
@@ -98,7 +100,7 @@ class TetrisBoard extends React.Component {
   } 
 
   render() {
-  this.render_next_piece();
+  //this.render_next_piece();
     let board = this.create_board();
     let side_board = this.create_side_board();
     //this.render_piece();
