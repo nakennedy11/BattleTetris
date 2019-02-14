@@ -31,6 +31,7 @@ class TetrisBoard extends React.Component {
   tick() {
     this.setState(prevState => ({ seconds : prevState.seconds + 1}));
 	  this.render_next_piece();
+    this.piece_fall();
 	  this.render_piece();
   }
 
@@ -97,14 +98,18 @@ class TetrisBoard extends React.Component {
     this.channel.push("render_next_piece", {})
                 .receive("ok", resp => {console.log("rendered next piece", resp.game);
                 this.setState(resp.game);});
-  } 
+  }
+
+  piece_fall() {
+    this.channel.push("piece_fall", {})
+                .receive("ok", resp => {console.log("dropped piece by 1", resp.game);
+                this.setState(resp.game);});
+  }
 
   render() {
-  //this.render_next_piece();
     let board = this.create_board();
     let side_board = this.create_side_board();
-    //this.render_piece();
-    //TODO: figure out how to render this seperately from the gameboard
+
     return (
 	    <div className="row">
 		  <div className="column"> {board} </div>

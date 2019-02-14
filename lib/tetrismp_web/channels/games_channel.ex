@@ -19,7 +19,7 @@ defmodule TetrismpWeb.GamesChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("render_piece", %{}, socket) do
-    game = Game.render_piece(socket.assigns[:game]) # want to render the piece by changing the values of the board
+    game = Game.render_piece(socket.assigns[:game], 1) # want to render the piece by changing the values of the board
     socket = assign(socket, :game, game)
     name = socket.assigns[:name]
     BackupAgent.put(name, game)
@@ -34,6 +34,14 @@ defmodule TetrismpWeb.GamesChannel do
     BackupAgent.put(name, game)
     {:reply, {:ok, %{"game" => game}}, socket}
     
+  end
+
+  def handle_in("piece_fall", %{}, socket) do
+    game = Game.piece_fall(socket.assigns[:game]) # increment the anchor y val 
+    socket = assign(socket, :game, game)
+    name = socket.assigns[:name]
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => game}}, socket}
   end
 
   # Add authorization logic here as required.

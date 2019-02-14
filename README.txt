@@ -32,3 +32,17 @@ Changes (2/13 - Bach)
   an old game state? I'll take a look at it later today.
 - Moved piece rendering to ontick, but I'm really not sure where to put it.
 - TODO: falling, collision, line destruction (in order of difficulty)
+
+
+Changes (2/13 evening, ya boi n$$$)
+- everything seems to be rendering fine for me
+  - The L piece was rendering backwards but thats because you were recursively
+  calling rev_l_piece instead of l_piece in the function, i'm assuming you
+  copied and pasted and just never changed it lmao
+- abstracted rendering functions to take a parameter x, that way we can use it
+  to un-render an old piece as it moves as well
+- added falling, still need to make it stop at the bottom but I feel that should be handled at collision. We are on our way to finding the wild things.
+
+- TODO: also need to add turning the piece which will mightily mess up our rendering but thats ok because we still have each other
+
+
