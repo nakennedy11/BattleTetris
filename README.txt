@@ -38,11 +38,13 @@ Changes (2/13 evening, ya boi n$$$)
 - everything seems to be rendering fine for me
   - The L piece was rendering backwards but thats because you were recursively
   calling rev_l_piece instead of l_piece in the function, i'm assuming you
-  copied and pasted and just never changed it lmao
+  copied and pasted and just never changed it lmao (i'm such a goddamn idiot... - Bach)
 - abstracted rendering functions to take a parameter x, that way we can use it
   to un-render an old piece as it moves as well
-- added falling, still need to make it stop at the bottom but I feel that should be handled at collision. We are on our way to finding the wild things.
+- added falling, still need to make it stop at the bottom but I feel that should be handled at collision. We are on our way to finding the wild things (i havent heard that phrase in years)
+- There can be another condition for falling, when i == 20.
 
 - TODO: also need to add turning the piece which will mightily mess up our rendering but thats ok because we still have each other
-
+  - Will it? I thought since we render based off of the anchor point, if we pass a rotated anchor point, it'll be fine? We just need to
+     - calculate rotations on that point?
 
