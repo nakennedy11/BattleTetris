@@ -1,5 +1,7 @@
 defmodule Tetrismp.Game do
 
+import Tetrismp.Render
+
 # GameState:
   # gameboard: function that returns a list of 200 0's (a 1d array)
   # current piece (some tuple or object)
@@ -47,8 +49,7 @@ defmodule Tetrismp.Game do
   end
 
   # replace elements in board and update the game state
-  def replace_board(i, j, game, x) do
-    index = idx(i,j)
+  def replace_board(game, index, x) do
     new_list = List.replace_at(game.board, index, x) # replacing in game board
     Map.put(game, :board, new_list) # updating in game state
   end
@@ -56,28 +57,47 @@ defmodule Tetrismp.Game do
   # returns the updated game state with the piece on the board
   def render_piece(game, x) do
     piece = game.current_piece
-    {_, piece_type} = Enum.fetch(piece, 3)
-    {_, i} = Enum.fetch(piece, 0)
-    {_, j} = Enum.fetch(piece, 1)
-    game = replace_board(i, j, game, x)
+    piece_type = Enum.at(piece, 3)
+    i = Enum.at(piece, 0)
+    j = Enum.at(piece, 1)
+    orientation = Enum.at(piece, 2)
    
-    # now we need to change the rest of game board based on the type of piece 
     cond do
       piece_type == 1 ->
-        long_piece(game, i, j, 1, x)
+        idx_list  = long_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
       piece_type == 2 ->
-        t_piece(game, i, j, 1, x)
+        idx_list  = t_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
       piece_type == 3 ->
-        square_piece(game, i, j, 1, x)
+        idx_list  = square_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
       piece_type == 4 ->
-        rev_z_piece(game, i, j, 1, x)
+        idx_list  = rev_z_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
       piece_type == 5 ->
-        z_piece(game, i, j, 1, x)
+        idx_list  = z_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
       piece_type == 6 ->
-        rev_l_piece(game, i, j, 1, x)
+        idx_list  = rev_l_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
       piece_type == 7 ->
-        l_piece(game, i, j, 1, x)
-    end      
+        idx_list  = l_piece(i, j, orientation)
+        plot_piece(game, idx_list, x)
+    end
+  end
+
+  def plot_piece(game, idx_list, x) do
+    idx0 = Enum.at(idx_list, 0)
+    idx1 = Enum.at(idx_list, 1)
+    idx2 = Enum.at(idx_list, 2)
+    idx3 = Enum.at(idx_list, 3)
+
+    game
+    |> replace_board(idx0, x)
+    |> replace_board(idx1, x)
+    |> replace_board(idx2, x)
+    |> replace_board(idx3, x)
   end
 
   # essentially a duplicate of the above render function, will probably abstract it
@@ -148,126 +168,7 @@ defmodule Tetrismp.Game do
 
   end
   
-
-  #TODO: Maybe move this to another file?
-
-  # change values in board list for the long piece
-  def long_piece(game, i, j, count, x) do
-    if (count < 4) do #recursively call this function if the count is less than 4, we are changing values of game board 
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        long_piece(new_game, i, j, count + 1, x)
-     else
-       game #long boy is done, return game state
-    end
-  end
-
-  # change values in board list for the t piece
-  def t_piece(game, i, j, count, x) do
-    cond do
-      count == 1 ->
-        j = j + 1
-        new_game = replace_board(i, j, game, x)
-        t_piece(new_game, i, j, count + 1, x)
-      count == 2 ->
-        j = j - 2 #need to navigate back to the anchor point so index math doesn't get messed up 
-        new_game = replace_board(i, j, game, x)
-        t_piece(new_game, i, j, count + 1, x)
-       count == 3 ->
-        i = i + 1
-        j = j + 1
-        replace_board(i, j, game, x) # we can return here because there's nothing left to add
-    end
-  end
-
-  # change the values in board list for the square piece
-  def square_piece(game, i, j, count, x) do
-    cond do
-      count == 1 ->
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        square_piece(new_game, i, j, count + 1, x)
-      count == 2 ->
-        i = i - 1
-        j = j + 1
-        new_game = replace_board(i, j, game, x)
-        square_piece(new_game, i, j, count + 1, x)
-      count == 3 ->
-        i = i + 1
-        replace_board(i, j, game, x)
-    end
-  end
-
-  # change the values in board list for the reverse z piece
-  def rev_z_piece(game, i, j, count, x)do
-    cond do 
-      count == 1 ->
-        j = j - 1
-        new_game = replace_board(i, j, game, x)
-        rev_z_piece(new_game, i, j, count + 1, x)
-      count == 2 ->
-        j = j + 1
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        rev_z_piece(new_game, i, j, count + 1, x)
-      count == 3 ->
-        j = j + 1
-        replace_board(i, j, game, x)
-    end
-  end
-
-  # change the values in board list for the z piece
-  def z_piece(game, i, j, count, x) do
-    cond do
-      count == 1 ->
-        j = j + 1
-        new_game = replace_board(i, j, game, x)
-        z_piece(new_game, i, j, count + 1, x)
-      count == 2 ->
-        j = j - 1
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        z_piece(new_game, i, j, count + 1, x)
-      count == 3 ->
-        j = j - 1
-        replace_board(i, j, game, x)
-    end   
-  end
-
-  # change the values in board list for the reverse l piece
-  def rev_l_piece(game, i, j, count, x) do
-    cond do
-      count == 1 ->
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        rev_l_piece(new_game, i, j, count + 1, x)
-      count == 2 ->
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        rev_l_piece(new_game, i, j, count + 1, x)
-      count == 3 ->
-        j = j - 1
-        replace_board(i, j, game, x)
-    end
-  end
-
-  # change the values in board list for the l piece
-  def l_piece(game, i, j, count, x) do
-    cond do
-      count == 1 ->
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        l_piece(new_game, i, j, count + 1, x)
-      count == 2 ->
-        i = i + 1
-        new_game = replace_board(i, j, game, x)
-        l_piece(new_game, i, j, count + 1, x)
-      count == 3 ->
-        j = j + 1
-        replace_board(i, j, game, x)
-    end
-  end
-
+ 
   # falling piece function. Updates the anchor point to be one index lower
   def piece_fall(game) do
     piece = game.current_piece
@@ -280,4 +181,18 @@ defmodule Tetrismp.Game do
 
   end
 
+  def change_orientation(game) do
+    piece = game.current_piece
+    
+    orientation = Enum.at(piece, 2)
+    orientation = orientation + 1
+    if orientation == 5 do
+      orientation = 1
+    end
+    piece = List.replace_at(piece, 2, orientation)
+    Map.put(game, :current_piece, piece) 
+    
+  end
 end
+
+

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import _ from 'lodash';
 
+
 export default function game_init(root, channel) {
   ReactDOM.render(<TetrisBoard channel={channel} />, root);
 }
@@ -32,16 +33,18 @@ class TetrisBoard extends React.Component {
     this.setState(prevState => ({ seconds : prevState.seconds + 1}));
 	  this.render_next_piece();
     this.piece_fall();
-	  this.render_piece();
+    this.render_piece();
   }
 
   // mounting component
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);	
+    this.interval = setInterval(() => this.tick(), 1000);
+    document.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
+    document.removeEventListener("keydown", this.handleKeyDown);
   }
 
   // create the board
@@ -105,21 +108,28 @@ class TetrisBoard extends React.Component {
                 .receive("ok", resp => {console.log("dropped piece by 1", resp.game);
                 this.setState(resp.game);});
   }
+  
+  handleKeyDown(e) {
+    if (e.keyCode === 38) {
+           this.channel.push("rotate", {})
+                .receive("ok", resp => {console.log("rotate1", resp.game);
+                this.setState(resp.game);});
+    }
+  }
 
   render() {
     let board = this.create_board();
     let side_board = this.create_side_board();
-
+   
     return (
 	    <div className="row">
-		  <div className="column"> {board} </div>
+      <div className="column"> {board} </div>
 		  <div className="column">  Lines: {this.state.lines_destroyed} </div>
 		  <div className="column">
             <div className="row"> Next Piece: {this.state.next_piece} </div>
             <div className="column"> {side_board} </div>
       </div>
-	          <div className="column"> Seconds: {this.state.seconds} </div>
-	  </div> );
+      </div>);
   }
 }
 
