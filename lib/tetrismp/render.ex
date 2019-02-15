@@ -10,12 +10,12 @@ defmodule Tetrismp.Render  do
     idx0 = idx(i,j)
 
     cond do
-      orientation == 1 or orientation == 3  ->
+      orientation == 0 or orientation == 2  ->
         idx1 = idx(i+1, j)
         idx2 = idx(i+2, j)
         idx3 = idx(i+3, j)
         [idx0, idx1, idx2, idx3]
-      orientation == 2 or orientation == 4 ->
+      orientation == 1 or orientation == 3 ->
         idx1 = idx(i, j + 1)
         idx2 = idx(i, j + 2)
         idx3 = idx(i, j + 3)
@@ -29,22 +29,22 @@ defmodule Tetrismp.Render  do
     idx0 = idx(i, j)
 
     cond do
-      orientation == 1   ->
+      orientation == 0   ->
         idx1 = idx(i+1, j)
         idx2 = idx(i, j - 1)
         idx3 = idx(i, j + 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 2 ->
+      orientation == 1 ->
         idx1 = idx(i, j - 1)
         idx2 = idx(i - 1, j - 1)
         idx3 = idx(i + 1, j - 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 3 ->
+      orientation == 2 ->
         idx1 = idx(i - 1, j)
         idx2 = idx(i - 1, j - 1)
         idx3 = idx(i - 1, j + 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 4 ->
+      orientation == 3 ->
         idx1 = idx(i, j + 1)
         idx2 = idx(i - 1, j + 1)
         idx3 = idx(i + 1, j + 1)
@@ -66,12 +66,12 @@ defmodule Tetrismp.Render  do
     idx0 = idx(i, j)
 
     cond do
-      orientation == 1 or orientation == 3 ->
+      orientation == 0 or orientation == 2 ->
         idx1 = idx(i, j - 1)
         idx2 = idx(i + 1, j - 1)
         idx3 = idx(i + 1, j - 2)
         [idx0, idx1, idx2, idx3]
-      orientation == 2 or orientation == 4 ->
+      orientation == 1 or orientation == 3 ->
         idx1 = idx(i - 1, j)
         idx2 = idx(i - 1, j - 1)
         idx3 = idx(i - 2, j - 1)
@@ -84,12 +84,12 @@ defmodule Tetrismp.Render  do
     idx0 = idx(i, j)
 
     cond do
-      orientation == 1 or orientation == 3 ->
+      orientation == 0 or orientation == 2 ->
         idx1 = idx(i, j + 1)
         idx2 = idx(i + 1, j + 1)
         idx3 = idx(i + 1, j + 2)
         [idx0, idx1, idx2, idx3]
-      orientation == 2 or orientation == 4 ->
+      orientation == 1 or orientation == 3 ->
         idx1 = idx(i + 1, j)
         idx2 = idx(i + 1, j - 1)
         idx3 = idx(i + 2, j - 1)
@@ -102,22 +102,22 @@ defmodule Tetrismp.Render  do
     idx0 = idx(i, j)
 
     cond do
-      orientation == 1   ->
+      orientation == 0   ->
         idx1 = idx(i + 1, j)
         idx2 = idx(i + 2, j)
         idx3 = idx(i + 2, j - 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 2 ->
+      orientation == 1 ->
         idx1 = idx(i, j - 1)
         idx2 = idx(i, j - 2)
         idx3 = idx(i - 1, j - 2)
         [idx0, idx1, idx2, idx3]
-      orientation == 3 ->
+      orientation == 2 ->
         idx1 = idx(i - 1, j)
         idx2 = idx(i - 2, j)
         idx3 = idx(i - 2, j + 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 4 ->
+      orientation == 3 ->
         idx1 = idx(i, j + 1)
         idx2 = idx(i, j + 2)
         idx3 = idx(i + 1, j + 2)
@@ -130,22 +130,22 @@ defmodule Tetrismp.Render  do
     idx0 = idx(i, j)
 
     cond do
-      orientation == 1   ->
+      orientation == 0   ->
         idx1 = idx(i + 1, j)
         idx2 = idx(i + 2, j)
         idx3 = idx(i + 2, j + 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 2 ->
+      orientation == 1 ->
         idx1 = idx(i, j - 1)
         idx2 = idx(i, j - 2)
         idx3 = idx(i + 1, j - 2)
         [idx0, idx1, idx2, idx3]
-      orientation == 3 ->
+      orientation == 2 ->
         idx1 = idx(i - 1, j)
         idx2 = idx(i - 2, j)
         idx3 = idx(i - 2, j - 1)
         [idx0, idx1, idx2, idx3]
-      orientation == 4 ->
+      orientation == 3 ->
         idx1 = idx(i, j + 1)
         idx2 = idx(i, j + 2)
         idx3 = idx(i - 1, j + 2)

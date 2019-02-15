@@ -37,7 +37,7 @@ import Tetrismp.Render
     %{
       i: 0, #this has to be 0 because of the way the gameboard is arranged >;(
       j: 4,
-      orientation: 1, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
+      orientation: 0, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
       piece: :rand.uniform(7), #this will be the type of piece
     }
            
@@ -184,15 +184,19 @@ import Tetrismp.Render
   def change_orientation(game) do
     piece = game.current_piece
     
-    orientation = Enum.at(piece, 2)
-    orientation = orientation + 1
-    if orientation == 5 do
-      orientation = 1
-    end
-    piece = List.replace_at(piece, 2, orientation)
-    Map.put(game, :current_piece, piece) 
+    piece_orientation = Enum.at(piece, 2)
+    new_or = rem(piece_orientation + 1, 4)
+
+    new_piece = List.replace_at(piece, 2, new_or)
+
+    IO.puts(new_or)
+    
+    game
+    |> render_piece(0)
+    |> Map.put(:current_piece, new_piece) 
     
   end
 end
+
 
 
