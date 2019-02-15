@@ -178,7 +178,7 @@ import Tetrismp.Render
     game
     |> render_piece(0) # need to unrender the old piece placement
     |> Map.put(:current_piece, temp_piece) # return the game with the new piece placement
-
+    |> render_piece(1)
   end
 
   def change_orientation(game) do
@@ -196,6 +196,31 @@ import Tetrismp.Render
     |> Map.put(:current_piece, new_piece) 
     
   end
+  
+  def move(game, direction) do
+    piece = game.current_piece
+    cond do
+      direction == "left" ->
+        next_j = Enum.at(piece, 1) - 1 
+        temp_piece = List.replace_at(piece, 1, next_j)
+
+        game
+        |> render_piece(0)
+        |> Map.put(:current_piece, temp_piece)
+        |> render_piece(1)
+
+      direction == "right" ->
+        next_j = Enum.at(piece, 1) + 1 
+        temp_piece = List.replace_at(piece, 1, next_j)
+
+        game
+        |> render_piece(0)
+        |> Map.put(:current_piece, temp_piece)
+        |> render_piece(1)
+    end
+
+  end
+  
 end
 
 

@@ -32,23 +32,55 @@ class TetrisBoard extends React.Component {
   tick() {
     this.setState(prevState => ({ seconds : prevState.seconds + 1}));
 	  this.render_next_piece();
-    this.piece_fall();
+    
     this.render_piece();
+    this.piece_fall();
+    this.elim_lines();
+
+  }
+
+  elim_lines() {
+    let game = this.state.board;
+   	
+    for (let i = 0; i < 200; i += 10) {
+	let all_ones = !game.slice(i, i + 10).includes(0);
+	if (all_ones) {
+		let array0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		let array1 = game.slice(0, i);
+		let array2 = game.slice(i + 10, 200);
+		let game = array0.concat(array1, array2);
+	}
+    }
+
+    this.setState({ board: game});
   }
 
   // mounting component
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 1000);
-    document.addEventListener("keydown", () => {
-                         this.channel.push("rotate", {})
-          .receive("ok", resp => {console.log("rotate", resp.game);
-           this.setState(resp.game);});}
+    this.interval = setInterval(() => this.tick(), 600);
+    document.addEventListener("keydown", (e) => {
+	   let code = e.keyCode;
+	   if (code == 38) { // up on arrow to rotate
+             this.channel.push("rotate", {})
+                 .receive("ok", resp => {console.log("rotate", resp.game);});
+	   }
+	   else if (code == 37) { // left on arrow to move left
+             this.channel.push("move", {direction : "left"})
+                 .receive("ok", resp => {console.log("move left", resp.game);});
+           }
+           else if (code == 39) { // right on arrow to rotate
+             this.channel.push("move", {direction : "right"})
+                 .receive("ok", resp => {console.log("move right", resp.game);});
+           }
+           this.setState(resp.game);
+	   }
     , true);
   }
 
   componentWillUnmount() {
     clearInterval(this.interval);
-    document.removeEventListener("keydown",() => {
+    document.removeEventListener("keydown",(e) => {
+	                 alert(e.keyCode);
                          this.channel.push("rotate", {})
           .receive("ok", resp => {console.log("rotate", resp.game);
            this.setState(resp.game);});} );

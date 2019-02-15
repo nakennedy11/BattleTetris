@@ -52,6 +52,14 @@ defmodule TetrismpWeb.GamesChannel do
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
+  def handle_in("move", %{"direction" => direction}, socket) do
+    game = Game.move(socket.assigns[:game], direction) # move the game piece in the corresponding direcion 
+    socket = assign(socket, :game, game)
+    name = socket.assigns[:name]
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
+
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true
