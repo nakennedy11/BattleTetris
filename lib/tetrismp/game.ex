@@ -171,14 +171,24 @@ import Tetrismp.Render
  
   # falling piece function. Updates the anchor point to be one index lower
   def piece_fall(game) do
-    piece = game.current_piece
-    next_i = Enum.at(piece, 0) + 1 # increment i (y) value of the anchor
-    temp_piece = List.replace_at(piece, 0, next_i) # replace the value in the list
+    if collision?(game) do
+      # collides if it falls, so update our pieces instead
+      new_current_piece = game.next_piece # make the next piece the current piece
+      new_next_piece = Map.values(random_piece()) # get a new random piece to be the next piece
+      game
+      |> Map.put(:current_piece, new_current_piece)
+      |> Map.put(:next_piece, new_next_piece)
 
-    game
-    |> render_piece(0) # need to unrender the old piece placement
-    |> Map.put(:current_piece, temp_piece) # return the game with the new piece placement
-    |> render_piece(1)
+    else
+      piece = game.current_piece
+      next_i = Enum.at(piece, 0) + 1 # increment i (y) value of the anchor
+      temp_piece = List.replace_at(piece, 0, next_i) # replace the value in the list
+
+      game
+      |> render_piece(0) # need to unrender the old piece placement
+      |> Map.put(:current_piece, temp_piece) # return the game with the new piece placement
+      |> render_piece(1)
+    end
   end
 
   def change_orientation(game) do
@@ -218,7 +228,85 @@ import Tetrismp.Render
         |> Map.put(:current_piece, temp_piece)
         |> render_piece(1)
     end
+  end
 
+  def collision?(game) do
+    board = game.board
+
+    piece = game.current_piece
+    piece_type = Enum.at(piece, 3)
+    i = Enum.at(piece, 0)
+    j = Enum.at(piece, 1)
+    orientation = Enum.at(piece, 2)
+
+    # cond to get the list of indices that this piece currently takes up
+    cond do
+      piece_type == 1 ->
+        idx_list  = long_piece(i, j, orientation)
+        check_collision(game, idx_list)
+      piece_type == 2 ->
+        idx_list  = t_piece(i, j, orientation)
+        check_collision(game, idx_list)
+      piece_type == 3 ->
+        idx_list  = square_piece(i, j, orientation)
+        check_collision(game, idx_list)
+      piece_type == 4 ->
+        idx_list  = rev_z_piece(i, j, orientation)
+        check_collision(game, idx_list)
+      piece_type == 5 ->
+        idx_list  = z_piece(i, j, orientation)
+        check_collision(game, idx_list)
+      piece_type == 6 ->
+        idx_list  = rev_l_piece(i, j, orientation)
+        check_collision(game, idx_list)
+      piece_type == 7 ->
+        idx_list  = l_piece(i, j, orientation)
+        check_collision(game, idx_list)
+    end
+  end
+
+  def check_collision(game, idx_list) do
+    idx0 = Enum.at(idx_list, 0)
+    idx1 = Enum.at(idx_list, 1)
+    idx2 = Enum.at(idx_list, 2)
+    idx3 = Enum.at(idx_list, 3)
+
+    # check if any of those lower indices are past the end of the game board
+    if idx0 + 10 > 199 || idx1 + 10 > 199 || idx2 + 10 > 199 || idx3 + 10 > 199  do
+      true
+    else
+      # get each index that is one lower than the current squares
+      board_idx0 = Enum.at(board, idx0 + 10)
+      board_idx1 = Enum.at(board, idx1 + 10)
+      board_idx2 = Enum.at(board, idx2 + 10)
+      board_idx3 = Enum.at(board, idx3 + 10)
+    
+      # check if any point on the board 1 lower is already occupied, make sure it isnt part of the piece
+      if Enum.at(board, board_idx0) == 1 && board_idx0 != idx1 && board_idx0 != idx2 && board_idx0 != idx3 do
+        # do nothing cause collides == false already
+      else
+        true
+      end
+      
+      if Enum.at(board, board_idx1) == 1 && board_idx1 != idx0 && board_idx1 != idx2 && board_idx1 != idx3 do
+      # do nothing cause collides == false already
+      else
+        true
+      end
+      
+      if Enum.at(board, board_idx2) == 1 && board_idx2 != idx0 && board_idx2 != idx1 && board_idx2 != idx3 do
+        # do nothing cause collides == false already
+      else
+        true
+      end
+      
+      if Enum.at(board, board_idx3) == 1 && board_idx3 != idx1 && board_idx3 != idx2 && board_idx3 != idx0 do
+        # do nothing cause collides == false already
+      else
+        true
+      end
+      false
+    end
   end
   
 end
