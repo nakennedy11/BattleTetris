@@ -48,3 +48,9 @@ Changes (2/13 evening, ya boi n$$$)
   - Will it? I thought since we render based off of the anchor point, if we pass a rotated anchor point, it'll be fine? We just need to
      - calculate rotations on that point?
 
+Changes (2/15) noah
+
+added collision? and check collision
+pieces stop at the bottom but will go through each other
+render next piece is struggling, im not sure exactly with what
+I think if statements don't like having multiple conditions?? maybe add a function that evaluates or something idk

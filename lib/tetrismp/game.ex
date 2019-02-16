@@ -275,37 +275,32 @@ import Tetrismp.Render
     if idx0 + 10 > 199 || idx1 + 10 > 199 || idx2 + 10 > 199 || idx3 + 10 > 199  do
       true
     else
+      board = game.board
+
       # get each index that is one lower than the current squares
       board_idx0 = Enum.at(board, idx0 + 10)
       board_idx1 = Enum.at(board, idx1 + 10)
       board_idx2 = Enum.at(board, idx2 + 10)
       board_idx3 = Enum.at(board, idx3 + 10)
-    
+      
       # check if any point on the board 1 lower is already occupied, make sure it isnt part of the piece
       if Enum.at(board, board_idx0) == 1 && board_idx0 != idx1 && board_idx0 != idx2 && board_idx0 != idx3 do
-        # do nothing cause collides == false already
+        if Enum.at(board, board_idx1) == 1 && board_idx1 != idx0 && board_idx1 != idx2 && board_idx1 != idx3 do
+          if Enum.at(board, board_idx2) == 1 && board_idx2 != idx0 && board_idx2 != idx1 && board_idx2 != idx3 do
+            if Enum.at(board, board_idx3) == 1 && board_idx3 != idx1 && board_idx3 != idx2 && board_idx3 != idx0 do
+              false
+            else
+              true
+            end
+          else
+            true
+          end
+        else
+          true
+        end
       else
         true
       end
-      
-      if Enum.at(board, board_idx1) == 1 && board_idx1 != idx0 && board_idx1 != idx2 && board_idx1 != idx3 do
-      # do nothing cause collides == false already
-      else
-        true
-      end
-      
-      if Enum.at(board, board_idx2) == 1 && board_idx2 != idx0 && board_idx2 != idx1 && board_idx2 != idx3 do
-        # do nothing cause collides == false already
-      else
-        true
-      end
-      
-      if Enum.at(board, board_idx3) == 1 && board_idx3 != idx1 && board_idx3 != idx2 && board_idx3 != idx0 do
-        # do nothing cause collides == false already
-      else
-        true
-      end
-      false
     end
   end
   
