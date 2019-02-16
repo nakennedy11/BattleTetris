@@ -54,3 +54,7 @@ added collision? and check collision
 pieces stop at the bottom but will go through each other
 render next piece is struggling, im not sure exactly with what
 I think if statements don't like having multiple conditions?? maybe add a function that evaluates or something idk
+
+Changes 2/16, Bach
+Changed axis of rotation, looks a lot better now.
+Changed the tick rate, looks smoother now.

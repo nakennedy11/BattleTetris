@@ -57,7 +57,7 @@ class TetrisBoard extends React.Component {
 
   // mounting component
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 600);
+    this.interval = setInterval(() => this.tick(), 450);
     document.addEventListener("keydown", (e) => {
 	   let code = e.keyCode;
 	   if (code == 38) { // up on arrow to rotate
@@ -148,17 +148,6 @@ class TetrisBoard extends React.Component {
                 this.setState(resp.game);});
   }
   
-  handleKeyDown(e) {
-    if (e.keyCode === 38) {
-      this.handleKey()
-    }
-  }
-
-  handleKey() {
-    this.channel.push("rotate", {})
-          .receive("ok", resp => {console.log("rotate", resp.game);
-           this.setState(resp.game);});
-  }
 
   render() {
     let board = this.create_board();
