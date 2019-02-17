@@ -35,7 +35,7 @@ class TetrisBoard extends React.Component {
     
     this.render_piece();
     this.piece_fall();
-    this.elim_lines();
+	  //this.elim_lines();
 
   }
 
@@ -45,6 +45,7 @@ class TetrisBoard extends React.Component {
     for (let i = 0; i < 200; i += 10) {
 	let all_ones = !game.slice(i, i + 10).includes(0);
 	if (all_ones) {
+		alert("HERE");
 		let array0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		let array1 = game.slice(0, i);
 		let array2 = game.slice(i + 10, 200);
@@ -57,7 +58,7 @@ class TetrisBoard extends React.Component {
 
   // mounting component
   componentDidMount() {
-    this.interval = setInterval(() => this.tick(), 450);
+    this.interval = setInterval(() => this.tick(), 500);
     document.addEventListener("keydown", (e) => {
 	   let code = e.keyCode;
 	   if (code == 38) { // up on arrow to rotate

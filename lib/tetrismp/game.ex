@@ -35,11 +35,11 @@ import Tetrismp.Render
     # Piece 7 L (upright facing)
 
     %{
-      i: 0, #this has to be 0 because of the way the gameboard is arranged >;(
+      i: 1, #this has to be 0 because of the way the gameboard is arranged >;(
       j: 4,
-      orientation: 0, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
+      orientation: 1, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
       piece: 6
-      #:rand.uniform(7), #this will be the type of piece
+#:rand.uniform(7), #this will be the type of piece
     }
            
   end
@@ -176,6 +176,7 @@ import Tetrismp.Render
       # collides if it falls, so update our pieces instead
        new_current_piece = game.next_piece # make the next piece the current piece
        new_next_piece = Map.values(random_piece()) # get a new random piece to be the next piece
+       game = clear_small_board(game)
        game
        |> Map.put(:current_piece, new_current_piece)
        |> Map.put(:next_piece, new_next_piece)
@@ -191,6 +192,13 @@ import Tetrismp.Render
       |> render_piece(1)
     end
   end
+
+  def clear_small_board(game) do
+    new_board = List.duplicate(0, 16)
+    Map.put(game, :side_board, new_board)
+
+  end
+
 
   def change_orientation(game) do
     piece = game.current_piece
@@ -275,7 +283,7 @@ import Tetrismp.Render
     
     board = game.board
     # check if any of those lower indices are past the end of the game board
-    if idx0 + 10 > 199 || idx1 + 10 > 199 || idx2 + 10 > 199 || idx3 + 10 > 199  do
+    if idx0 + 10 > 200 || idx1 + 10 > 200 || idx2 + 10 > 200 || idx3 + 10 > 200  do
       IO.puts("HERE")
       true
     else
@@ -286,7 +294,7 @@ import Tetrismp.Render
       idx2_below = Enum.at(board, idx2 + 10) # 1 lower than index 3
       idx3_below = Enum.at(board, idx3 + 10) # 1 lower than index 4
     
-      
+      false  
 
 
   
@@ -308,7 +316,7 @@ import Tetrismp.Render
      # else
       #  true
      # end
-   # end
+    end
   end
   
   def same_piece(main, idx1, idx2, idx3) do
