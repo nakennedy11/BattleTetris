@@ -38,8 +38,7 @@ import Tetrismp.Render
       i: 1, #this has to be 0 because of the way the gameboard is arranged >;(
       j: 4,
       orientation: 1, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
-      piece: 6
-#:rand.uniform(7), #this will be the type of piece
+      piece: :rand.uniform(7), #this will be the type of piece
     }
            
   end
@@ -196,9 +195,7 @@ import Tetrismp.Render
   def clear_small_board(game) do
     new_board = List.duplicate(0, 16)
     Map.put(game, :side_board, new_board)
-
   end
-
 
   def change_orientation(game) do
     piece = game.current_piece
@@ -221,21 +218,35 @@ import Tetrismp.Render
     cond do
       direction == "left" ->
         next_j = Enum.at(piece, 1) - 1 
-        temp_piece = List.replace_at(piece, 1, next_j)
 
-        game
-        |> render_piece(0)
-        |> Map.put(:current_piece, temp_piece)
-        |> render_piece(1)
+        if next_j >= 0 do
+          temp_piece = List.replace_at(piece, 1, next_j)
 
+          game
+          |> render_piece(0)
+          |> Map.put(:current_piece, temp_piece)
+          |> render_piece(1)
+          
+        else
+          # do nothing because you can't move out of bounds
+          game
+        end
+        
       direction == "right" ->
         next_j = Enum.at(piece, 1) + 1 
-        temp_piece = List.replace_at(piece, 1, next_j)
 
-        game
-        |> render_piece(0)
-        |> Map.put(:current_piece, temp_piece)
-        |> render_piece(1)
+        if next_j <= 9 do
+          temp_piece = List.replace_at(piece, 1, next_j)
+
+          game
+          |> render_piece(0)
+          |> Map.put(:current_piece, temp_piece)
+          |> render_piece(1)
+        else
+          # do nothing, can't move any further right
+          game
+        end
+        
     end
   end
 
@@ -283,45 +294,48 @@ import Tetrismp.Render
     
     board = game.board
     # check if any of those lower indices are past the end of the game board
-    if idx0 + 10 > 200 || idx1 + 10 > 200 || idx2 + 10 > 200 || idx3 + 10 > 200  do
-      IO.puts("HERE")
-      true
+    if idx0 + 10 >= 200 || idx1 + 10 >= 200 || idx2 + 10 >= 200 || idx3 + 10 >= 200  do
+      IO.puts("At the bottom, colliding")
+      true # its at the bottom, so it collides
     else
+      # its not at the bottom, so check for collision with other pieces
+
+      IO.puts("not at the bottom, checking the rest of the pieces")
 
       # get each index that is one lower than the current squares
-      idx0_below = Enum.at(board, idx0 + 10) # 1 lower than index 1
-      idx1_below = Enum.at(board, idx1 + 10) # 1 lower than index 2
-      idx2_below = Enum.at(board, idx2 + 10) # 1 lower than index 3
-      idx3_below = Enum.at(board, idx3 + 10) # 1 lower than index 4
-    
-      false  
+      idx0_below = idx0 + 10 # 1 lower than index 1
+      idx1_below = idx1 + 10 # 1 lower than index 2
+      idx2_below = idx2 + 10 # 1 lower than index 3
+      idx3_below = idx3 + 10 # 1 lower than index 4
 
 
-  
-      # check if any point on the board 1 lower is already occupied, make sure it isnt part of the piece
-      #if Enum.at(board, idx0_below) == 1 && !same_piece(idx0_below, idx1, idx2, idx3) do
-      #  if Enum.at(board, idx1_below) == 1 && !same_piece(idx1_below, idx0, idx2, idx3) do
-      #    if Enum.at(board, idx2_below) == 1 && !same_piece(idx2_below, idx0, idx1, idx3) do
-      #      if Enum.at(board, idx3_below) == 1 && !same_piece(idx3_below, idx0, idx1, idx2) do
-      #        false #it's not going to collide
-      #      else
-      #        true # it will collide
-      #      end
-      #    else
-      #      true 
-      #    end
-      #  else
-      #    true
-      #  end
-     # else
-      #  true
-     # end
+      idx0_collide = square_collide(board, idx0_below, idx1, idx2, idx3)
+      IO.puts(idx0_collide)
+      idx1_collide = square_collide(board, idx1_below, idx0, idx2, idx3)
+      IO.puts(idx1_collide)
+      idx2_collide = square_collide(board, idx2_below, idx1, idx0, idx3)
+      IO.puts(idx2_collide)
+      idx3_collide = square_collide(board, idx3_below, idx1, idx2, idx0)
+      IO.puts(idx3_collide)
+
+      idx0_collide || idx1_collide || idx2_collide || idx3_collide
+    end
+  end
+
+
+  def square_collide(board, below, idx1, idx2, idx3) do
+    IO.puts("in square collide")
+    if Enum.at(board, below) == 1 do # if the lower square is occupied
+      IO.puts("lower is occupied, returning same piece")
+      !same_piece(below, idx1, idx2, idx3) # return true if its a different piece, false if its the same
+    else # the lower piece isn't occupied
+      IO.puts("lower is not occupied, false")
+      false # then that square is not going to collide with anything
     end
   end
   
   def same_piece(main, idx1, idx2, idx3) do
     main == idx1 || main == idx2 || main == idx3
-
   end
 end
 

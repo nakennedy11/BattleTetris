@@ -58,3 +58,15 @@ I think if statements don't like having multiple conditions?? maybe add a functi
 Changes 2/16, Bach
 Changed axis of rotation, looks a lot better now.
 Changed the tick rate, looks smoother now.
+
+Changes 2/18 early morning, Mozart
+
+Got collision on falling, we were using the 0 or 1 value of the index on the board instead of the index which messed things up for a while, but I think in the end I got a cleaner function anyways so whatever
+
+Added a function get_outermost - it gives the left or rightmost j value in the piece.
+      - we're going to need to use this to determine if a piece can be moved left or right based on hitting the edge
+      - right now its a bit tough because we don't get the index list in move
+      - I think we should add a function to return an idx_list because there are at least 2 places already that have the 7-armed-cond (decent band name btw) to check a piece and get its index list
+
+Definitely an issue with eliminating lines too - idk what rn, might end up being better to just check in javascript and handle the actual changes in elixir?
+or just move it all to elixir because we are a couple of back end savages and we all know you love ~pattern matching~
