@@ -79,7 +79,7 @@ Noah 2/19 crack of dawn
 
 
 Bach 2/19 Morning
-GOT COLLISION - we weren't updating the game state on the server side, so I added a function in the games channel to do that.
+GOT ELIMINATION - we weren't updating the game state on the server side, so I added a function in the games channel to do that.
 Moved the buttons to WASD because I didn't like the page moving when I used the arrwo keys
 Set up skeleton for MP: supervisor and stack files in lib/tetrismp
 Pressing D accelerates the falling.
