@@ -31,12 +31,11 @@ class TetrisBoard extends React.Component {
   // on tick function
   tick() {
     this.setState(prevState => ({ seconds : prevState.seconds + 1}));
-	  this.render_next_piece();
-    
-    this.render_piece();
-    this.piece_fall();
-    this.elim_lines();
 
+    this.piece_fall();
+    this.render_piece();
+    this.elim_lines();
+	  this.render_next_piece();
   }
 
   elim_lines() {
@@ -52,9 +51,6 @@ class TetrisBoard extends React.Component {
 this.channel.push("update_board", {board: game})
                  .receive("ok", resp => {
            this.setState(resp.game);});
-		    new_lines = this.state.lines_destroyed + 1;
-		    this.setState(lines_destroyed : new_lines);
-
 	}
 
         }
@@ -65,7 +61,7 @@ this.channel.push("update_board", {board: game})
   // mounting component
   componentDidMount() {
     this.interval = setInterval(() => this.tick(), 500);
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keyup", (e) => {
 	   let code = e.keyCode;
 	   if (code == 87) { // up on arrow to rotate
              this.channel.push("rotate", {})
@@ -93,7 +89,7 @@ this.channel.push("update_board", {board: game})
 
   componentWillUnmount() {
     clearInterval(this.interval);
-    document.removeEventListener("keydown",(e) => {
+    document.removeEventListener("keyup",(e) => {
 	                 alert(e.keyCode);
                          this.channel.push("rotate", {})
           .receive("ok", resp => {console.log("rotate", resp.game);
