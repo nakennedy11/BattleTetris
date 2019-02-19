@@ -12,6 +12,7 @@ defmodule Tetrismp.Application do
       TetrismpWeb.Endpoint,
       # Starts a worker by calling: Tetrismp.Worker.start_link(arg)
       # {Tetrismp.Worker, arg},
+      #Tetrismp.GameSup,
       Tetrismp.BackupAgent,
     ]
 

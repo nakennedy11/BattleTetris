@@ -35,12 +35,11 @@ class TetrisBoard extends React.Component {
     
     this.render_piece();
     this.piece_fall();
-	  this.elim_lines();
+    this.elim_lines();
 
   }
 
   elim_lines() {
-  console.log("in elim lines");
     let game = this.state.board;
    	
     for (let i = 0; i < 200; i += 10) {
@@ -59,9 +58,15 @@ class TetrisBoard extends React.Component {
 		  game = array0.concat(array1, array2);
       console.log("just updated lines, game is:");
       console.log(game);
+this.channel.push("update_board", {board: game})
+                 .receive("ok", resp => {
+           this.setState(resp.game);});
+
 	}
-    }
-    this.setState({board: game});
+
+        }
+	  
+
   }
 
   // mounting component
@@ -69,19 +74,26 @@ class TetrisBoard extends React.Component {
     this.interval = setInterval(() => this.tick(), 500);
     document.addEventListener("keydown", (e) => {
 	   let code = e.keyCode;
-	   if (code == 38) { // up on arrow to rotate
+	   if (code == 87) { // up on arrow to rotate
              this.channel.push("rotate", {})
-                 .receive("ok", resp => {console.log("rotate", resp.game);});
+                 .receive("ok", resp => {
+           this.setState(resp.game);});
 	   }
-	   else if (code == 37) { // left on arrow to move left
+	   else if (code == 65) { // left on arrow to move left
              this.channel.push("move", {direction : "left"})
-                 .receive("ok", resp => {console.log("move left", resp.game);});
+                 .receive("ok", resp => {
+           this.setState(resp.game);});
            }
-           else if (code == 39) { // right on arrow to rotate
+           else if (code == 68) { // right on arrow to rotate
              this.channel.push("move", {direction : "right"})
-                 .receive("ok", resp => {console.log("move right", resp.game);});
+                 .receive("ok", resp => {
+	     this.setState(resp.game);});
            }
-           this.setState(resp.game);
+           else if (code == 83) { // right on arrow to rotate
+	    this.piece_fall(); 
+           }
+
+
 	   }
     , true);
   }
@@ -141,19 +153,19 @@ class TetrisBoard extends React.Component {
   // render the current piece
   render_piece() {
     this.channel.push("render_piece", {})
-	  .receive("ok", resp => {console.log("rendered piece", resp.game);
+	  .receive("ok", resp => {
 		  this.setState(resp.game);});
   }
 
   render_next_piece() {
     this.channel.push("render_next_piece", {})
-                .receive("ok", resp => {console.log("rendered next piece", resp.game);
+                .receive("ok", resp => {
                 this.setState(resp.game);});
   }
 
   piece_fall() {
     this.channel.push("piece_fall", {})
-                .receive("ok", resp => {console.log("dropped piece by 1", resp.game);
+                .receive("ok", resp => {
                 this.setState(resp.game);});
   }
   

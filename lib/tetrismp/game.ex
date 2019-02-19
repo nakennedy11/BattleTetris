@@ -325,6 +325,14 @@ import Tetrismp.Render
         l_piece(i, j, orientation)
     end
   end
+
+  def update_board(game, board) do
+    Map.put(game, :board, board)
+  end
+
+
+
+
 end
 
 

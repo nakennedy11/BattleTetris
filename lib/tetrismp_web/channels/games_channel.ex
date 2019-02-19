@@ -68,6 +68,15 @@ defmodule TetrismpWeb.GamesChannel do
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
+  def handle_in("update_board", %{"board" => board}, socket) do
+    game = Game.update_board(socket.assigns[:game], board) 
+    socket = assign(socket, :game, game)
+    name = socket.assigns[:name]
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
+
+
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true

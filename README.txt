@@ -76,3 +76,10 @@ Noah 2/19 crack of dawn
      -Made a function to get the idx_list which helped with moving and also made render and collision functions cleaner
 
      - I changed elim_lines() just from having it say let game = in the loop to game = because I think it was messing with it. I added a bunch of console.logs to check the function and it is definitely noticing when a line is full and trying to remove it -- at this time it seems like it almost does but my game board just sort of glitches and shows both the previous board and the one with removed lines, but pieces are colliding with old pieces. Not sure why its updating so weirdly like that.
+
+
+Bach 2/19 Morning
+GOT COLLISION - we weren't updating the game state on the server side, so I added a function in the games channel to do that.
+Moved the buttons to WASD because I didn't like the page moving when I used the arrwo keys
+Set up skeleton for MP: supervisor and stack files in lib/tetrismp
+Pressing D accelerates the falling.
