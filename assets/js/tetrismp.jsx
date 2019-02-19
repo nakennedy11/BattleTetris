@@ -40,20 +40,28 @@ class TetrisBoard extends React.Component {
   }
 
   elim_lines() {
+  console.log("in elim lines");
     let game = this.state.board;
    	
     for (let i = 0; i < 200; i += 10) {
-	let all_ones = !game.slice(i, i + 10).includes(0);
-	if (all_ones) {
-	//	alert("HERE");
-		let array0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		let array1 = game.slice(0, i);
-		let array2 = game.slice(i + 10, 200);
-		let game = array0.concat(array1, array2);
+	    let all_ones = !game.slice(i, i + 10).includes(0);
+	    if (all_ones) {
+      console.log("i where it thinks theres a full line" + i);
+		  let array0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		  let array1 = game.slice(0, i);
+		  let array2 = game.slice(i + 10, 200);
+      console.log("array1: ");
+      console.log(array1);
+      console.log("array2:");
+      console.log(array2);
+      console.log("theoretical concat:");
+      console.log(array0.concat(array1, array2));
+		  game = array0.concat(array1, array2);
+      console.log("just updated lines, game is:");
+      console.log(game);
 	}
     }
-
-    this.setState({ board: game});
+    this.setState({board: game});
   }
 
   // mounting component

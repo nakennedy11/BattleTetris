@@ -57,34 +57,8 @@ import Tetrismp.Render
   # returns the updated game state with the piece on the board
   def render_piece(game, x) do
     piece = game.current_piece
-    piece_type = Enum.at(piece, 3)
-    i = Enum.at(piece, 0)
-    j = Enum.at(piece, 1)
-    orientation = Enum.at(piece, 2)
-   
-    cond do
-      piece_type == 1 ->
-        idx_list  = long_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-      piece_type == 2 ->
-        idx_list  = t_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-      piece_type == 3 ->
-        idx_list  = square_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-      piece_type == 4 ->
-        idx_list  = rev_z_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-      piece_type == 5 ->
-        idx_list  = z_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-      piece_type == 6 ->
-        idx_list  = rev_l_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-      piece_type == 7 ->
-        idx_list  = l_piece(i, j, orientation)
-        plot_piece(game, idx_list, x)
-    end
+    idx_list = get_idx_list(piece)
+    plot_piece(game, idx_list, x)
   end
 
   def plot_piece(game, idx_list, x) do
@@ -197,6 +171,11 @@ import Tetrismp.Render
     Map.put(game, :side_board, new_board)
   end
 
+  def clear_board(game)  do
+    new_board = List.duplicate(0, 200)
+    Map.put(game, :board, new_board)
+  end
+
   def change_orientation(game) do
     piece = game.current_piece
     
@@ -215,11 +194,14 @@ import Tetrismp.Render
   
   def move(game, direction) do
     piece = game.current_piece
+    idx_list = get_idx_list(piece)
+    outermost_j = get_outermost(idx_list, direction)
+
     cond do
       direction == "left" ->
         next_j = Enum.at(piece, 1) - 1 
 
-        if next_j >= 0 do
+        if outermost_j - 1 >= 0 do
           temp_piece = List.replace_at(piece, 1, next_j)
 
           game
@@ -235,7 +217,7 @@ import Tetrismp.Render
       direction == "right" ->
         next_j = Enum.at(piece, 1) + 1 
 
-        if next_j <= 9 do
+        if outermost_j + 1 <= 9 do
           temp_piece = List.replace_at(piece, 1, next_j)
 
           game
@@ -251,38 +233,9 @@ import Tetrismp.Render
   end
 
   def collision?(game) do
-    board = game.board
-
     piece = game.current_piece
-    piece_type = Enum.at(piece, 3)
-    i = Enum.at(piece, 0)
-    j = Enum.at(piece, 1)
-    orientation = Enum.at(piece, 2)
-
-    # cond to get the list of indices that this piece currently takes up
-    cond do
-      piece_type == 1 ->
-        idx_list  = long_piece(i, j, orientation)
-        check_collision(game, idx_list)
-      piece_type == 2 ->
-        idx_list  = t_piece(i, j, orientation)
-        check_collision(game, idx_list)
-      piece_type == 3 ->
-        idx_list  = square_piece(i, j, orientation)
-        check_collision(game, idx_list)
-      piece_type == 4 ->
-        idx_list  = rev_z_piece(i, j, orientation)
-        check_collision(game, idx_list)
-      piece_type == 5 ->
-        idx_list  = z_piece(i, j, orientation)
-        check_collision(game, idx_list)
-      piece_type == 6 ->
-        idx_list  = rev_l_piece(i, j, orientation)
-        check_collision(game, idx_list)
-      piece_type == 7 ->
-        idx_list  = l_piece(i, j, orientation)
-        check_collision(game, idx_list)
-    end
+    idx_list = get_idx_list(piece)
+    check_collision(game, idx_list)
   end
 
   def check_collision(game, idx_list) do
@@ -295,12 +248,9 @@ import Tetrismp.Render
     board = game.board
     # check if any of those lower indices are past the end of the game board
     if idx0 + 10 >= 200 || idx1 + 10 >= 200 || idx2 + 10 >= 200 || idx3 + 10 >= 200  do
-      IO.puts("At the bottom, colliding")
       true # its at the bottom, so it collides
     else
       # its not at the bottom, so check for collision with other pieces
-
-      IO.puts("not at the bottom, checking the rest of the pieces")
 
       # get each index that is one lower than the current squares
       idx0_below = idx0 + 10 # 1 lower than index 1
@@ -308,34 +258,72 @@ import Tetrismp.Render
       idx2_below = idx2 + 10 # 1 lower than index 3
       idx3_below = idx3 + 10 # 1 lower than index 4
 
-
       idx0_collide = square_collide(board, idx0_below, idx1, idx2, idx3)
-      IO.puts(idx0_collide)
       idx1_collide = square_collide(board, idx1_below, idx0, idx2, idx3)
-      IO.puts(idx1_collide)
       idx2_collide = square_collide(board, idx2_below, idx1, idx0, idx3)
-      IO.puts(idx2_collide)
       idx3_collide = square_collide(board, idx3_below, idx1, idx2, idx0)
-      IO.puts(idx3_collide)
 
       idx0_collide || idx1_collide || idx2_collide || idx3_collide
     end
   end
 
-
+  # checks the collision for an individual square of a piece
   def square_collide(board, below, idx1, idx2, idx3) do
-    IO.puts("in square collide")
     if Enum.at(board, below) == 1 do # if the lower square is occupied
-      IO.puts("lower is occupied, returning same piece")
       !same_piece(below, idx1, idx2, idx3) # return true if its a different piece, false if its the same
     else # the lower piece isn't occupied
-      IO.puts("lower is not occupied, false")
       false # then that square is not going to collide with anything
     end
   end
   
   def same_piece(main, idx1, idx2, idx3) do
     main == idx1 || main == idx2 || main == idx3
+  end
+
+  # gets either the rightmost or leftmost square, ignores duplicates
+  def get_outermost(idx_list, direction) do 
+    idx0 = Enum.at(idx_list, 0)
+    idx1 = Enum.at(idx_list, 1)
+    idx2 = Enum.at(idx_list, 2)
+    idx3 = Enum.at(idx_list, 3)
+
+    j0 = rem(idx0, 10)
+    j1 = rem(idx1, 10)
+    j2 = rem(idx2, 10)
+    j3 = rem(idx3, 10)
+
+    cond do
+      direction == "left" ->
+        Enum.min([j0, j1, j2, j3])
+      direction == "right" ->
+        Enum.max([j0, j1, j2, j3]) 
+    end
+  end
+
+
+  def get_idx_list(piece) do
+    piece_type = Enum.at(piece, 3)
+    i = Enum.at(piece, 0)
+    j = Enum.at(piece, 1)
+    orientation = Enum.at(piece, 2)
+
+    # cond to get the list of indices that this piece currently takes up
+    cond do
+      piece_type == 1 ->
+        long_piece(i, j, orientation)
+      piece_type == 2 ->
+        t_piece(i, j, orientation)
+      piece_type == 3 ->
+        square_piece(i, j, orientation)
+      piece_type == 4 ->
+        rev_z_piece(i, j, orientation)
+      piece_type == 5 ->
+        z_piece(i, j, orientation)
+      piece_type == 6 ->
+        rev_l_piece(i, j, orientation)
+      piece_type == 7 ->
+        l_piece(i, j, orientation)
+    end
   end
 end
 

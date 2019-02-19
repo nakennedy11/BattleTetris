@@ -70,3 +70,9 @@ Added a function get_outermost - it gives the left or rightmost j value in the p
 
 Definitely an issue with eliminating lines too - idk what rn, might end up being better to just check in javascript and handle the actual changes in elixir?
 or just move it all to elixir because we are a couple of back end savages and we all know you love ~pattern matching~
+
+Noah 2/19 crack of dawn
+
+     -Made a function to get the idx_list which helped with moving and also made render and collision functions cleaner
+
+     - I changed elim_lines() just from having it say let game = in the loop to game = because I think it was messing with it. I added a bunch of console.logs to check the function and it is definitely noticing when a line is full and trying to remove it -- at this time it seems like it almost does but my game board just sort of glitches and shows both the previous board and the one with removed lines, but pieces are colliding with old pieces. Not sure why its updating so weirdly like that.
