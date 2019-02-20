@@ -2,7 +2,6 @@ defmodule Tetrismp.GameSup do
   use DynamicSupervisor
    
   def start_link(arg) do
-    IO.puts("Start link")
     DynamicSupervisor.start_link(__MODULE__, arg, name: __MODULE__)
   end
 
@@ -13,7 +12,6 @@ defmodule Tetrismp.GameSup do
   end
 
   def start_child(spec) do
-    IO.puts("####started child")
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
 end

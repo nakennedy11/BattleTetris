@@ -184,47 +184,12 @@ import Tetrismp.Render
 
     new_piece = List.replace_at(piece, 2, new_or)
 
-    new_idx_list = get_idx_list(new_piece)
-    leftmost_j = get_outermost(new_idx_list, "left")
-    rightmost_j = get_outermost(new_idx_list, "right")
-
-    board = game.board
-    board_val0 = Enum.at(new_idx_list, 0)
-    board_val1 = Enum.at(new_idx_list, 1)
-    board_val2 = Enum.at(new_idx_list, 2)
-    board_val3 = Enum.at(new_idx_list, 3)
-
-    cur_idx_list = get_idx_list(piece)
-
-    collide0 = Enum.at(board, board_val0) == 0 || Enum.member?(cur_idx_list, board_val0)
-    collide1 = Enum.at(board, board_val1) == 0 || Enum.member?(cur_idx_list, board_val1)
-    collide2 = Enum.at(board, board_val2) == 0 || Enum.member?(cur_idx_list, board_val2)
-    collide3 = Enum.at(board, board_val3) == 0 || Enum.member?(cur_idx_list, board_val3)
-
-    collides_on_turn = !collide0 || !collide1 || !collide2 || !collide3
-
-    if leftmost_j - 1 >= 0 && rightmost_j + 1 <= 9 && !collides_on_turn do
-      game
-      |> render_piece(0)
-      |> Map.put(:current_piece, new_piece)
-      |> render_piece(1)
-
-    else
-      game
-
-  #    if leftmost_j - 1 < 0  do
-  #                    shifted_piece = List.replace_at(new_piece, 1, Enum.at(new_piece, 1) + 2)
-  #                    game
-  #                    |> render_piece(0)
-  #                    |> Map.put(:current_piece, shifted_piece) 
-                      
-  #    else
-  #      shifted_piece = List.replace_at(new_piece, 1, Enum.at(new_piece, 1) - 2)
-  #      game
-  #      |> render_piece(0)
-  #      |> Map.put(:current_piece, shifted_piece) 
-  #    end
-    end
+    IO.puts(new_or)
+    
+    game
+    |> render_piece(0)
+    |> Map.put(:current_piece, new_piece) 
+    
   end
   
   def move(game, direction) do
@@ -232,87 +197,39 @@ import Tetrismp.Render
     idx_list = get_idx_list(piece)
     outermost_j = get_outermost(idx_list, direction)
 
-    if side_collision?(game, direction) do
-      game
-    else
-      cond do
-        direction == "left" ->
-          next_j = Enum.at(piece, 1) - 1 
-          
-          if outermost_j - 1 >= 0 do
-                           temp_piece = List.replace_at(piece, 1, next_j)
-                           
-                           game
-                           |> render_piece(0)
-                           |> Map.put(:current_piece, temp_piece)
-                           |> render_piece(1)
-                           
-                           else
-                             # do nothing because you can't move out of bounds
-                             game
-          end
-          
-          direction == "right" ->
-          next_j = Enum.at(piece, 1) + 1 
-          
-          if outermost_j + 1 <= 9 do
-                           temp_piece = List.replace_at(piece, 1, next_j)
-                           
-                           game
-                           |> render_piece(0)
-                           |> Map.put(:current_piece, temp_piece)
-                           |> render_piece(1)
-                           else
-                             # do nothing, can't move any further right
-                             game
-          end   
-      end
-    end
-  end
-
-  def side_collision?(game, direction) do
-    piece = game.current_piece
-    idx_list = get_idx_list(piece)
-    check_side_collision(game, idx_list, direction)
-  end
-
-  def check_side_collision(game, idx_list, direction) do
-    #idx_list is the list of indexes for the current piece
-    idx0 = Enum.at(idx_list, 0)
-    idx1 = Enum.at(idx_list, 1)
-    idx2 = Enum.at(idx_list, 2)
-    idx3 = Enum.at(idx_list, 3)
-    
-    board = game.board
     cond do
       direction == "left" ->
-        # get each index that is one lower than the current squares
-        idx0_left = idx0 - 1  # 1 lefter than index 1
-        idx1_left = idx1 - 1  # 1 lefter than index 2
-        idx2_left = idx2 - 1  # 1 lefter than index 3
-        idx3_left = idx3 - 1  # 1 lefter than index 4
-        
-        idx0_collide = square_collide(board, idx0_left, idx1, idx2, idx3)
-        idx1_collide = square_collide(board, idx1_left, idx0, idx2, idx3)
-        idx2_collide = square_collide(board, idx2_left, idx1, idx0, idx3)
-        idx3_collide = square_collide(board, idx3_left, idx1, idx2, idx0)
-        idx0_collide || idx1_collide || idx2_collide || idx3_collide
+        next_j = Enum.at(piece, 1) - 1 
+
+        if outermost_j - 1 >= 0 do
+          temp_piece = List.replace_at(piece, 1, next_j)
+
+          game
+          |> render_piece(0)
+          |> Map.put(:current_piece, temp_piece)
+          |> render_piece(1)
+          
+        else
+          # do nothing because you can't move out of bounds
+          game
+        end
         
       direction == "right" ->
-        # get each index that is one lower than the current squares
-        idx0_right = idx0 + 1  # 1 righter than index 1
-        idx1_right = idx1 + 1  # 1 righter than index 2
-        idx2_right = idx2 + 1  # 1 righter than index 3
-        idx3_right = idx3 + 1  # 1 righter than index 4
-        
-        idx0_collide = square_collide(board, idx0_right, idx1, idx2, idx3)
-        idx1_collide = square_collide(board, idx1_right, idx0, idx2, idx3)
-        idx2_collide = square_collide(board, idx2_right, idx1, idx0, idx3)
-        idx3_collide = square_collide(board, idx3_right, idx1, idx2, idx0)
-        idx0_collide || idx1_collide || idx2_collide || idx3_collide
+        next_j = Enum.at(piece, 1) + 1 
+
+        if outermost_j + 1 <= 9 do
+          temp_piece = List.replace_at(piece, 1, next_j)
+
+          game
+          |> render_piece(0)
+          |> Map.put(:current_piece, temp_piece)
+          |> render_piece(1)
+        else
+          # do nothing, can't move any further right
+          game
+        end
         
     end
-    
   end
 
   def collision?(game) do
@@ -410,10 +327,12 @@ import Tetrismp.Render
   end
 
   def update_board(game, board) do
-    game
-    |> Map.put(:board, board)
-    |> Map.put(:lines_destroyed, game.lines_destroyed + 1)
+    Map.put(game, :board, board)
   end
+
+
+
+
 end
 
 
