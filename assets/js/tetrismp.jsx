@@ -168,20 +168,22 @@ class TetrisBoard extends React.Component {
         return (
 	    <div className="row">
               <div className="column">
-                <div className="row">{board}</div>
                 <div className="row">
+                  <div className="column">{player_board}</div>
                   <div className="coulumn">
                     <div className="row"> Next Piece:</div>
-                    <div className="row"> {side_board}</div>
+                    <div className="column"> {side_board}</div>
+                    <div className="row"> Lines Eliminated: {this.state.lines_eliminated}</div>
                   </div>
-                  <div className="column"> Lines Eliminated: {this.state.lines_eliminated}</div>
                 </div>
               </div>
-
+              
               <div className="column">
-                <div className="row">Enemy's board:</div>
-                <div className="row">{enemy_board}</div>
-                <div className="row">Lines Eliminated: {this.state.enemy_lines_eliminated}</div>
+                <div className="row">
+                  <div className="row">Enemy's board:</div>
+                  <div className="column">{enemy_board}</div>
+                  <div className="row">Lines Eliminated: {this.state.enemy_lines_eliminated}</div>
+                </div>
               </div>
             </div>);
     }
