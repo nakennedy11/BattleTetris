@@ -12,7 +12,6 @@ defmodule Tetrismp.Application do
       Tetrismp.GameSup,
       Tetrismp.BackupAgent,
     ]
-    IO.puts("IN START")
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Tetrismp.Supervisor]

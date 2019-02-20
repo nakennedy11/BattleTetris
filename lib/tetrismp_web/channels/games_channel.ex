@@ -8,11 +8,27 @@ defmodule TetrismpWeb.GamesChannel do
 
   def join("games"<>name, payload, socket) do
     if authorized?(payload) do
-      game = BackupAgent.get(name) || Game.new() # todo, assign a back up agent once created
+      game = BackupAgent.get(name)
+      if !game do
+        IO.puts("HERE")
+        new_game = Game.new() 
+
+      BackupAgent.put(name, new_game)
+       GameServer.start(name)
+      socket = socket
+      |> assign(:game, new_game)
+      |> assign(:name, name)
+
+             {:ok, %{"joined" => name, "game" => new_game}, socket}
+
+   else
+      
+       BackupAgent.put(name, game)
       socket = socket
       |> assign(:game, game)
       |> assign(:name, name)
       {:ok, %{"joined" => name, "game" => game}, socket}
+    end
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -21,7 +37,7 @@ defmodule TetrismpWeb.GamesChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("render_piece", %{}, socket) do
-    game = GameServer.render_piece(socket.assigns[:game], socket.assigns[:user])
+    game = GameServer.render_piece(socket.assigns[:user])
     push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket} 
   end

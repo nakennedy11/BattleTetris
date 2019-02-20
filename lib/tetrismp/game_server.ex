@@ -1,8 +1,6 @@
 defmodule Tetrismp.GameServer do
   use GenServer
 
-  alias Tetrismp.Game
-
   def reg(name) do
     {:via, Registry, {Tetrismp.GameReg, name}}
   end
@@ -31,12 +29,13 @@ defmodule Tetrismp.GameServer do
     {:ok, game}
   end
 
-  def render_piece(game, name) do
+  def render_piece(name) do
     GenServer.call(reg(name), {:render_piece, name})
   end
   
   # handle call for render piece
   def handle_call({:render_piece, name}, _from, game) do
+    IO.puts("####Handling call")
     game = Tetrismp.Game.render_piece(game, 1)
     Tetrismp.BackupAgent.put(name, game)
     {:reply, game, game}
