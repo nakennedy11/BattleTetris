@@ -1,6 +1,8 @@
 defmodule Tetrismp.GameServer do
   use GenServer
 
+  alias Tetrismp.Game
+
   def reg(name) do
     {:via, Registry, {Tetrismp.GameReg, name}}
   end
@@ -12,11 +14,12 @@ defmodule Tetrismp.GameServer do
       restart: :permanent,
       type: :worker,
     }
-    Tetrusmp.GameSup.start_child(spec)
+    Tetrismp.GameSup.start_child(spec)
   end
 
   def start_link(name) do
-    game = Tetrismp.BackupAgent.get(name) || Tetris.game.new()
+    IO.puts("IN SERVER START_LINK")
+    game = Tetrismp.BackupAgent.get(name) || Tetrismp.Game.new()
     GenServer.start_link(__MODULE__, game, name: reg(name))
   end
 
@@ -28,10 +31,18 @@ defmodule Tetrismp.GameServer do
     {:ok, game}
   end
 
-  # where we're gonna add and delete lines!
-  def handle_call() do
-
+  def render_piece(game, name) do
+    GenServer.call(reg(name), {:render_piece, name})
   end
+  
+  # handle call for render piece
+  def handle_call({:render_piece, name}, _from, game) do
+    game = Tetrismp.Game.render_piece(game, 1)
+    Tetrismp.BackupAgent.put(name, game)
+    {:reply, game, game}
+  end
+
+  
   
   
 

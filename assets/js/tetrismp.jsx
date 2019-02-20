@@ -25,7 +25,7 @@ class TetrisBoard extends React.Component {
       .join()
       .receive("ok", resp => { console.log("Joined successfully", resp.game);
                             this.setState(resp.game);})
-      .receive("error", resp => {console.log("Unable to join", resp);});
+      .receive("error", resp => {console.log("Unable to join", resp);});	  
   }
 
   // on tick function

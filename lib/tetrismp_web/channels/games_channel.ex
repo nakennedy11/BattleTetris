@@ -3,6 +3,8 @@ defmodule TetrismpWeb.GamesChannel do
 
   alias Tetrismp.Game
   alias Tetrismp.BackupAgent
+  alias Tetrismp.GameServer
+
 
   def join("games"<>name, payload, socket) do
     if authorized?(payload) do
@@ -19,12 +21,9 @@ defmodule TetrismpWeb.GamesChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("render_piece", %{}, socket) do
-    game = Game.render_piece(socket.assigns[:game], 1) # want to render the piece by changing the values of the board
-    socket = assign(socket, :game, game)
-    name = socket.assigns[:name]
-    BackupAgent.put(name, game)
-    {:reply, {:ok, %{"game" => game}}, socket}
-  
+    game = GameServer.render_piece(socket.assigns[:game], socket.assigns[:user])
+    push_update! game, socket
+    {:reply, {:ok, %{"game" => game}}, socket} 
   end
 
   def handle_in("render_next_piece", %{}, socket) do
@@ -60,14 +59,6 @@ defmodule TetrismpWeb.GamesChannel do
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
-  def handle_in("clear", %{}, socket) do
-    game = Game.clear_board(socket.assigns[:game]) 
-    socket = assign(socket, :game, game)
-    name = socket.assigns[:name]
-    BackupAgent.put(name, game)
-    {:reply, {:ok, %{"game" => game}}, socket}
-  end
-
   def handle_in("update_board", %{"board" => board}, socket) do
     game = Game.update_board(socket.assigns[:game], board) 
     socket = assign(socket, :game, game)
@@ -75,7 +66,10 @@ defmodule TetrismpWeb.GamesChannel do
     BackupAgent.put(name, game)
     {:reply, {:ok, %{"game" => game}}, socket}
   end
-
+  
+  defp push_update!(game, socket) do
+    broadcast!(socket, "update", game)
+  end
 
   # Add authorization logic here as required.
   defp authorized?(_payload) do
