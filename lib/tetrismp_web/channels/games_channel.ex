@@ -6,15 +6,20 @@ defmodule TetrismpWeb.GamesChannel do
   alias Tetrismp.GameServer
 
 
-  def join("games:"<>name, payload, socket) do
+  def join("games:"<>name,  payload, socket) do
+    
     if authorized?(payload) do
       game = BackupAgent.get(name) || Game.new()
       BackupAgent.put(name, game)
       socket = socket
       |> assign(:game, game)
       |> assign(:name, name)
+      |> assign(:user, payload)
       GameServer.start(name)
+      IO.puts(socket.assigns[:user])
+
       {:ok, %{"joined" => name, "game" => game}, socket}
+
     else
       {:error, %{reason: "unauthorized"}}
     end

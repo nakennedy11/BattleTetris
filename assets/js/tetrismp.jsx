@@ -38,6 +38,16 @@ class TetrisBoard extends React.Component {
         this.render_piece();
         this.elim_lines();
 	this.render_next_piece();
+	if (this.game_over()) { // check if game if over, alert is just for testing
+          alert("GAME OVER");
+        }
+    }
+
+    game_over() {
+      let board = this.state.board;
+      let first_row = board.slice(0, 10) // the top row 
+      return first_row.includes(1) // if any piece reaches the top row, it's game over
+
     }
     
     elim_lines() {
@@ -173,7 +183,7 @@ class TetrisBoard extends React.Component {
                   <div className="coulumn">
                     <div className="row"> Next Piece:</div>
                     <div className="column"> {side_board}</div>
-                    <div className="row"> Lines Eliminated: {this.state.lines_eliminated}</div>
+                    <div className="row"> Lines Eliminated: {this.state.lines_destroyed}</div>
                   </div>
                 </div>
               </div>
@@ -182,7 +192,7 @@ class TetrisBoard extends React.Component {
                 <div className="row">
                   <div className="row">Enemy's board:</div>
                   <div className="column">{enemy_board}</div>
-                  <div className="row">Lines Eliminated: {this.state.enemy_lines_eliminated}</div>
+                  <div className="row">Lines Eliminated: {this.state.enemy_lines_destroyed}</div>
                 </div>
               </div>
             </div>);

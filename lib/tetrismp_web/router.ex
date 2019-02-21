@@ -22,7 +22,6 @@ defmodule TetrismpWeb.Router do
     post "/game", PageController, :game_form
 
 
-
   end
 
   # Other scopes may use custom stacks.

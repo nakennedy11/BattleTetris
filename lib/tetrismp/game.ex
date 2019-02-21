@@ -35,9 +35,9 @@ import Tetrismp.Render
     # Piece 7 L (upright facing)
 
     %{
-      i: 1, #this has to be 0 because of the way the gameboard is arranged >;(
-      j: 4,
-      orientation: 1, # phx was swapping orientation and piece for some reason, so I swapped them in the code to keep it consistent
+      i: 1, #starting i
+      j: 4, #starting j
+      orientation: 1,
       piece: :rand.uniform(7), #this will be the type of piece
     }
            

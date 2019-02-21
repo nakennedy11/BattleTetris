@@ -19,7 +19,7 @@ import $ from "jquery";
 
 import socket from "./socket";
 import game_init from "./tetrismp";
-let channel = socket.channel("games:" + window.gameName, {});
+let channel = socket.channel("games:" + window.gameName, window.userName, {});
 $(() => {
   let root = $('#root')[0];
   if (root) {
