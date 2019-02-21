@@ -5,6 +5,7 @@ defmodule TetrismpWeb.GamesChannel do
   alias Tetrismp.BackupAgent
   alias Tetrismp.GameServer
 
+  intercept ["update"]
 
   def join("games:"<>name,  payload, socket) do
     
@@ -63,7 +64,14 @@ defmodule TetrismpWeb.GamesChannel do
     push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket}
   end
-  
+
+  def handle_out("update", game_data, socket) do
+    IO.inspect("Broadcasting update to #{socket.assigns[:user]}")
+    push socket, "update", %{ "game" => game_data }
+    {:noreply, socket}
+  end
+
+
   defp push_update!(game, socket) do
     broadcast!(socket, "update", game)
   end

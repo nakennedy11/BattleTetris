@@ -83,3 +83,11 @@ GOT ELIMINATION - we weren't updating the game state on the server side, so I ad
 Moved the buttons to WASD because I didn't like the page moving when I used the arrwo keys
 Set up skeleton for MP: supervisor and stack files in lib/tetrismp
 Pressing D accelerates the falling.
+
+
+Noah 2/21 in the early am
+
+Changed tickrate, was too fast at least for testing
+
+It would appear that sending input does for both units not just the one
+got broadcasting to work appropriately though

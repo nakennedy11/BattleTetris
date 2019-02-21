@@ -27,8 +27,19 @@ class TetrisBoard extends React.Component {
             .join()
             .receive("ok", resp => { console.log("Joined successfully", resp.game);
                                      this.setState(resp.game);})
-            .receive("error", resp => {console.log("Unable to join", resp);});	  
+            .receive("error", resp => {console.log("Unable to join", resp);});
+
+        this.channel.on("update", this.gotView.bind(this));
     }
+
+    gotView(view) {
+
+      let new_enemy_board = view.game.board;
+      let new_enemy_lines = view.game.lines_destroyed;
+
+      this.setState(prevState => ({enemy_board : new_enemy_board, enemy_lines_destroyed : new_enemy_lines}));
+
+    }   
     
     // on tick function
     tick() {
@@ -37,17 +48,19 @@ class TetrisBoard extends React.Component {
         this.piece_fall();
         this.render_piece();
         this.elim_lines();
-	this.render_next_piece();
-	if (this.game_over()) { // check if game if over, alert is just for testing
-          alert("GAME OVER");
-        }
+        this.render_next_piece();
+        this.game_over();
     }
 
     game_over() {
-      let board = this.state.board;
-      let first_row = board.slice(0, 10) // the top row 
-      return first_row.includes(1) // if any piece reaches the top row, it's game over
+      let lines_elim = this.state.lines_destroyed;
+      let enemy_elims = this.state.enemy_lines_destroyed;
 
+      if (lines_elim >= 5) {
+         alert("You won! Eliminated " + lines_elim + " lines and your opponent eliminated " + enemy_elims + ".");
+      } else if (enemy_elims >= 5) {
+         alert("You lost :( Eliminated " + lines_elim + " lines and your opponent eliminated " + enemy_elims + ".");  
+      }
     }
     
     elim_lines() {
@@ -72,7 +85,7 @@ class TetrisBoard extends React.Component {
     
     // mounting component
     componentDidMount() {
-        this.interval = setInterval(() => this.tick(), 500);
+        this.interval = setInterval(() => this.tick(), 750);
         document.addEventListener("keyup", (e) => {
 	    let code = e.keyCode;
 	    if (code == 87) { // up on arrow to rotate
