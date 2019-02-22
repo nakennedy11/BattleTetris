@@ -8,13 +8,14 @@ import Tetrismp.Render
   # next piece (some tuple or object)
   # lines destroyed (integer)
   
-  def new do
+  def new(user) do
     %{
       board: List.duplicate(0, 200), # make a list of 200 0's to represent all the unfilled squares
       current_piece: Map.values(random_piece()),
       next_piece: Map.values(random_piece()),
       side_board: List.duplicate(0, 16), # 4x4 grid should be enough to render any piece, slightly overkill but annoying to do math for 3x4 or something or 2x4
-      lines_destroyed: 0
+      lines_destroyed: 0,
+      id: user
       }
   end
 

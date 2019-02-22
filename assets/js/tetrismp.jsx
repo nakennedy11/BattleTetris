@@ -20,7 +20,8 @@ class TetrisBoard extends React.Component {
             lines_destroyed: 0,
             seconds: 0,
             enemy_board: [],
-            enemy_lines_destroyed: 0
+            enemy_lines_destroyed: 0,
+            id: ""
         };
         
         this.channel
@@ -33,12 +34,19 @@ class TetrisBoard extends React.Component {
     }
 
     gotView(view) {
+      let game = view.game;
 
-      let new_enemy_board = view.game.board;
-      let new_enemy_lines = view.game.lines_destroyed;
+	      console.log("game ID" + game.id + "state ID" + this.state.id);
+      if (game.id == this.state.id) {
 
-      this.setState(prevState => ({enemy_board : new_enemy_board, enemy_lines_destroyed : new_enemy_lines}));
+        this.setState(game);
+      }
+      else {
+        let new_enemy_board = view.game.board;
+        let new_enemy_lines = view.game.lines_destroyed;
 
+        this.setState(prevState => ({enemy_board : new_enemy_board, enemy_lines_destroyed : new_enemy_lines}));
+      }
     }   
     
     // on tick function
@@ -49,7 +57,7 @@ class TetrisBoard extends React.Component {
         this.render_piece();
         this.elim_lines();
         this.render_next_piece();
-        this.game_over();
+        //this.game_over();
     }
 
     game_over() {

@@ -7,18 +7,18 @@ defmodule Tetrismp.GameServer do
     {:via, Registry, {Tetrismp.GameReg, name}}
   end
 
-  def start(name) do
+  def start(name, id) do
     spec = %{
       id: __MODULE__,
-      start: {__MODULE__, :start_link, [name]},
+      start: {__MODULE__, :start_link, [name, id]},
       restart: :permanent,
       type: :worker,
     }
     Tetrismp.GameSup.start_child(spec)
   end
 
-  def start_link(name) do
-    game = BackupAgent.get(name) || Tetrismp.Game.new()
+  def start_link(name, id) do
+    game = BackupAgent.get(name, id) || Tetrismp.Game.new(id)
     GenServer.start_link(__MODULE__, game, name: reg(name))
   end
 
@@ -32,71 +32,71 @@ defmodule Tetrismp.GameServer do
 
 #######################################################
 
-  def render_piece(name) do
-    GenServer.call(reg(name), {:render_piece, name})
+  def render_piece(name, id) do
+    GenServer.call(reg(name), {:render_piece, name, id})
   end
 
-  def render_next_piece(name) do
-    GenServer.call(reg(name), {:render_next_piece, name})
+  def render_next_piece(name, id) do
+    GenServer.call(reg(name), {:render_next_piece, name, id})
   end
 
-  def piece_fall(name) do
-    GenServer.call(reg(name), {:piece_fall, name})
+  def piece_fall(name, id) do
+    GenServer.call(reg(name), {:piece_fall, name, id})
   end
 
-  def change_orientation(name) do
-    GenServer.call(reg(name), {:change_orientation, name})
+  def change_orientation(name, id) do
+    GenServer.call(reg(name), {:change_orientation, name, id})
   end
 
-  def move(name, direction) do
-    GenServer.call(reg(name), {:move, name, direction})
+  def move(name, id, direction) do
+    GenServer.call(reg(name), {:move, name, id, direction})
   end
 
-  def update_board(name, board) do
-    GenServer.call(reg(name), {:update, name, board})
+  def update_board(name, id, board) do
+    GenServer.call(reg(name), {:update, name, board, id})
   end
   
 #######################################################
 
   # handle call for render piece
-  def handle_call({:render_piece, name}, _from, game) do
+  def handle_call({:render_piece, name, id}, _from, game) do
     game = Game.render_piece(game, 1)
-    BackupAgent.put(name, game)
+    BackupAgent.put(name, id, game)
     {:reply, game, game}
   end
 
   # handle call for render next piece
-  def handle_call({:render_next_piece, name}, _from, game) do
+  def handle_call({:render_next_piece, name, id}, _from, game) do
     game = Game.render_next_piece(game)
-    BackupAgent.put(name, game)
+    BackupAgent.put(name, id, game)
     {:reply, game, game}
   end
 
   # handle call for piece fall
-  def handle_call({:piece_fall, name}, _from, game) do
+  def handle_call({:piece_fall, name, id}, _from, game) do
     game = Game.piece_fall(game)
-    BackupAgent.put(name, game)
+    BackupAgent.put(name, id, game)
     {:reply, game, game}
   end
 
   # handle call for change orientation
-  def handle_call({:change_orientation, name}, _from, game) do
+  def handle_call({:change_orientation, name, id}, _from, game) do
     game = Game.change_orientation(game)
-    BackupAgent.put(name, game)
+    BackupAgent.put(name, id, game)
     {:reply, game, game}
   end
 
   # handle call for move
-  def handle_call({:move, name, direction}, _from, game) do
+  def handle_call({:move, name, direction, id}, _from, game) do
     game = Game.move(game, direction)
-    BackupAgent.put(name, game)
+    BackupAgent.put(name, id, game)
     {:reply, game, game}
   end
 
   # handle call for update board
-  def handle_call({:update, name, board}, _from, game) do
+  def handle_call({:update, name, board, id}, _from, game) do
     game = Game.update_board(game, board)
-    BackupAgent.put(name, game)
+    BackupAgent.put(name, id, game)
     {:reply, game, game}
  
   end

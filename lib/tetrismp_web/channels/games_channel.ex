@@ -10,15 +10,18 @@ defmodule TetrismpWeb.GamesChannel do
   def join("games:"<>name,  payload, socket) do
 
     if authorized?(payload) do
-      game = BackupAgent.get(name) || Game.new()
-      BackupAgent.put(name, game)
+      IO.puts("before join")
+      game = BackupAgent.get(name, payload) || Game.new(payload)
+       
+      IO.puts("after get")
+      BackupAgent.put(name, payload, game)
+      IO.inspect(BackupAgent.get(name, payload))
+      IO.puts("after put")
       socket = socket
       |> assign(:game, game)
       |> assign(:name, name)
       |> assign(:user, payload)
       GameServer.start(name, payload)
-      IO.puts(socket.assigns[:user])
-      IO.inspect(socket)
       {:ok, %{"joined" => name, "game" => game}, socket}
 
 
@@ -30,39 +33,39 @@ defmodule TetrismpWeb.GamesChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("render_piece", %{}, socket) do
-    game = GameServer.render_piece(socket.assigns[:name])
-    #push_update! game, socket
+    game = GameServer.render_piece(socket.assigns[:name], socket.assigns[:user])
+    push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket} 
   end
 
   def handle_in("render_next_piece", %{}, socket) do
-    game = GameServer.render_next_piece(socket.assigns[:name])
-    #push_update! game, socket
+    game = GameServer.render_next_piece(socket.assigns[:name], socket.assigns[:user])
+    push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
   def handle_in("piece_fall", %{}, socket) do
-    game = GameServer.piece_fall(socket.assigns[:name])
-    #push_update! game, socket
+    game = GameServer.piece_fall(socket.assigns[:name], socket.assigns[:user])
+    push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
   def handle_in("rotate", %{}, socket) do
-    game = GameServer.change_orientation(socket.assigns[:name])
-    #push_update! game, socket
+    game = GameServer.change_orientation(socket.assigns[:name], socket.assigns[:user])
+    push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket}
  
   end
 
   def handle_in("move", %{"direction" => direction}, socket) do
-    game = GameServer.move(socket.assigns[:name], direction)
-    #push_update! game, socket
+    game = GameServer.move(socket.assigns[:name], socket.assigns[:user], direction)
+    push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
   def handle_in("update_board", %{"board" => board}, socket) do
-    game = GameServer.update_board(socket.assigns[:name], board)
-    #push_update! game, socket
+    game = GameServer.update_board(socket.assigns[:name], socket.assigns[:user], board)
+    push_update! game, socket
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 

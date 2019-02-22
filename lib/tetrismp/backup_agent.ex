@@ -8,17 +8,32 @@ defmodule Tetrismp.BackupAgent do
     Agent.start_link(fn -> %{} end, name: __MODULE__)
   end
 
-  def put(name, val) do
+  def put(gamename, user, val) do
     Agent.update __MODULE__, fn state->
-      Map.put(state, name, val)
+      users = Map.get(state, gamename)
+      if users do
+        IO.puts("usrs nil")
+        users = Map.put(users, user, val)
+        Map.put(state, gamename, users)
+      else
+       IO.puts("users not nil")
+        users = %{}
+        users = Map.put(users, user, val)
+        Map.put(state, gamename, users)
+      end
     end
   end
 
-  def get(name) do
+  def get(name, user) do
     Agent.get __MODULE__, fn state ->
-      Map.get(state, name)
+     IO.puts(name)
+      users = Map.get(state, name)
+      if users do
+        Map.get(users, user)
+      else 
+        nil
+      end
     end
   end
 end
-
 
