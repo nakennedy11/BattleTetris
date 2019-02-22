@@ -12,10 +12,10 @@ defmodule TetrismpWeb.GamesChannel do
     if authorized?(payload) do
       IO.puts("before join")
       game = BackupAgent.get(name, payload) || Game.new(payload)
-       
+             
       IO.puts("after get")
       BackupAgent.put(name, payload, game)
-      IO.inspect(BackupAgent.get(name, payload))
+      IO.inspect(BackupAgent)
       IO.puts("after put")
       socket = socket
       |> assign(:game, game)
@@ -69,8 +69,24 @@ defmodule TetrismpWeb.GamesChannel do
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
+  def handle_in("update_game", %{ "game" => game }, socket) do
+    IO.puts(Map.get(game, :id))
+    if Map.get(game, :id) do
+      BackupAgent.put(socket.assigns[:name], Map.get(game, :id), game)
+      {:reply, {:ok, %{"game" => game}}, socket}
+    end
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
+
+  def handle_in("update_enemy", %{"enemy_board" => enemy_board, "enemy_lines_destroyed" => enemy_lines_destroyed}, socket) do
+    game = GameServer.update_enemy(socket.assigns[:name], socket.assigns[:user], enemy_board, enemy_lines_destroyed)
+    push_update! game, socket
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
+
   def handle_out("update", game_data, socket) do
     IO.inspect("Broadcasting update to #{socket.assigns[:user]}")
+    IO.inspect(game_data)
     push socket, "update", %{ "game" => game_data }
     {:noreply, socket}
   end

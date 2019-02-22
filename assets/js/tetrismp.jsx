@@ -36,10 +36,12 @@ class TetrisBoard extends React.Component {
     gotView(view) {
       let game = view.game;
 
-	      console.log("game ID" + game.id + "state ID" + this.state.id);
+	      console.log("game ID: " + game.id + "state ID: " + this.state.id);
       if (game.id == this.state.id) {
-
-        this.setState(game);
+      this.channel.push("update_game", {game: game})
+                    .receive("ok", resp => {
+                        this.setState(resp.game);});
+       
       }
       else {
         let new_enemy_board = view.game.board;
