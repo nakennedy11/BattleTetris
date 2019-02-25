@@ -15,6 +15,8 @@ import Tetrismp.Render
       next_piece: Map.values(random_piece()),
       side_board: List.duplicate(0, 16), # 4x4 grid should be enough to render any piece, slightly overkill but annoying to do math for 3x4 or something or 2x4
       lines_destroyed: 0,
+      enemy_board: List.duplicate(0, 200),
+      enemy_lines_destroyed: 0,
       id: user
       }
   end

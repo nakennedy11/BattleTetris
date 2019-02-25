@@ -12,11 +12,10 @@ defmodule Tetrismp.BackupAgent do
     Agent.update __MODULE__, fn state->
       users = Map.get(state, gamename)
       if users do
-        IO.puts("usrs nil")
-        users = Map.put(users, user, val)
-        Map.put(state, gamename, users)
+        new_users = Map.put(users, user, val)
+	IO.inspect(new_users)
+        Map.put(state, gamename, new_users)
       else
-       IO.puts("users not nil")
         users = %{}
         users = Map.put(users, user, val)
         Map.put(state, gamename, users)
@@ -29,6 +28,7 @@ defmodule Tetrismp.BackupAgent do
      IO.puts(name)
       users = Map.get(state, name)
       if users do
+	IO.inspect(Map.get(users, user))
         Map.get(users, user)
       else 
         nil
