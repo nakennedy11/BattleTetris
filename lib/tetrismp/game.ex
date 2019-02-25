@@ -23,7 +23,7 @@ import Tetrismp.Render
   # PROPERTIES OF PIECES
   ## Anchor point (all points based off this reference (of x and y))
   ## They all the same starting anchor point
-  ## Each piece has an orientation (LGBT (left, gright, bottom, top)) DEFAULT:: top
+  ## Each piece has an orientation ((left, right, bottom, top)) DEFAULT:: top
   ## Each piece has a type
   
   def random_piece do
